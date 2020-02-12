@@ -1,0 +1,10 @@
+label: Detect participant (Open Monkey Mind)
+icon: text-x-generic
+menu:
+    index: -1
+    separator_after: false
+    separator_before: true
+    submenu: Tools
+settings:
+    serial_port: 5
+    detector: Dummy
