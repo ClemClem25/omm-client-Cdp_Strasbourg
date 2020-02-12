@@ -1,0 +1,130 @@
+---
+API: 2.1
+OpenSesame: 3.3.0a62
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Conditioner test"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/sebastiaan/git/rousset-management-system/example_experiments"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set background black
+
+define sketchpad display_reward
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press for reward" x=0 y=0 z_index=0
+
+define sketchpad display_sound_both
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press for sound both" x=0 y=0 z_index=0
+
+define sketchpad display_sound_left
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press for sound left" x=0 y=0 z_index=0
+
+define sketchpad display_sound_off
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press for sound off" x=0 y=0 z_index=0
+
+define sketchpad display_sound_right
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press for sound right" x=0 y=0 z_index=0
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run display_reward always
+	run reward always
+	run display_sound_left always
+	run sound_left always
+	run display_sound_right always
+	run sound_right always
+	run display_sound_both always
+	run sound_both always
+	run display_sound_off always
+	run sound_off always
+	run finished always
+
+define sketchpad finished
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press to quit" x=0 y=0 z_index=0
+
+define OMMConditioner reward
+	set sound "do nothing"
+	set serial_port COM4
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
+
+define OMMConditioner sound_both
+	set sound both
+	set serial_port COM4
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
+
+define OMMConditioner sound_left
+	set sound left
+	set serial_port COM4
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
+
+define OMMConditioner sound_off
+	set sound off
+	set serial_port COM4
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
+
+define OMMConditioner sound_right
+	set sound right
+	set serial_port COM4
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
+
