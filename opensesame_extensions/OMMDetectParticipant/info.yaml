@@ -6,5 +6,5 @@ menu:
     separator_before: true
     submenu: Tools
 settings:
-    serial_port: 5
-    detector: Dummy
+    omm_detector_serial_port: COM5
+    omm_detector_type: Dummy

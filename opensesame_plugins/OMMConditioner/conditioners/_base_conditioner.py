@@ -10,6 +10,11 @@ class BaseConditioner:
         if 'experiment' not in kwargs:
             raise ValueError('BaseConditioner expects experiment keyword')
         self._experiment = kwargs['experiment']
+        
+    @property
+    def clock(self):
+        
+        return self._experiment.clock        
     
     def reward(self):
         

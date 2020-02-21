@@ -8,7 +8,7 @@ class BaseDetector(QtCore.QObject):
     entering = QtCore.Signal(str)
     leaving = QtCore.Signal()
     
-    def __init__(self, omm_detector):
+    def __init__(self, omm_detector, **kwargs):
         
         QtCore.QObject.__init__(self)
         self._omm_detector = omm_detector
@@ -20,9 +20,9 @@ class BaseDetector(QtCore.QObject):
         return self._running
     
     def start(self):
+
         self._running = True
-        
-    
+            
     def stop(self):
         
         self._running = False

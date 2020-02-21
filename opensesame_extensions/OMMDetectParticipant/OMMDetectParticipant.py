@@ -2,6 +2,7 @@
 
 from libopensesame.oslogging import oslogger
 from libqtopensesame.extensions import BaseExtension
+from libqtopensesame.misc.config import cfg
 import detectors
 
 
@@ -15,8 +16,8 @@ class OMMDetectParticipant(BaseExtension):
         
         if self._detector is not None:
             return
-        cls = getattr(detectors, self.info.get('detector', 'Dummy'))
-        self._detector = cls(self)
+        cls = getattr(detectors, cfg.omm_detector_type)
+        self._detector = cls(self, port=cfg.omm_detector_serial_port)
         self._detector.entering.connect(self.entering)
         self._detector.leaving.connect(self.leaving)
         oslogger.info('detector initialized')
