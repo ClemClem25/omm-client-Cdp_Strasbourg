@@ -6,7 +6,7 @@ controls: [
         "label": "Loop for testing",
         "name": "line_edit_test_loop",
         "type": "line_edit",
-        "extra": "Is used for testing when OMM is not connected",
+        "info": "Defines variables during testing",
         "var": "test_loop"
     }
 ]

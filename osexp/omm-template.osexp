@@ -1,0 +1,94 @@
+---
+API: 2.1
+Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perception
+  & Psychophysics*, *51*(6), 599–606. <http://doi.org/10.3758/BF03211656>
+
+  '
+Description: An attentional capture experiment, loosely based on Theeuwes (1992)
+OpenSesame: 3.3.0a70
+Platform: posix
+Title: Attentional capture
+---
+set width 1024
+set uniform_coordinates yes
+set title "OMM Template"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/sebastiaan/git/omm-client/osexp"
+set disable_garbage_collection yes
+set description "Loosely based on Theeuwes (1992)"
+set coordinates relative
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background gray
+
+define OMMRequestCurrentJob OMMRequestCurrentJob
+	set test_loop test_loop
+	set description "Plugin to request current job for Open Monkey Mind"
+
+define OMMSendCurrentJobResults OMMSendCurrentJobResults
+	set description "Plugin to send current job results for Open Monkey Mind"
+
+define sequence empty_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "The main sequence of the experiment"
+	run test_loop always
+	run OMMRequestCurrentJob always
+	run trial_sequence always
+	run OMMSendCurrentJobResults always
+
+define sketchpad fixdot
+	set duration keypress
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Condition: [condition]<br /><br /><br />Press any key" x=0.0 y=0.0 z_index=0
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define loop test_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 condition A
+	setcycle 1 condition B
+	run empty_sequence
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run fixdot always
+	run logger always
+
