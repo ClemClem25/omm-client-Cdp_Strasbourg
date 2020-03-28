@@ -1,0 +1,9 @@
+category: Open Monkey Mind
+description: A plugin for announcing participants
+icon: text-x-generic
+controls:
+-
+    label: Participant
+    name: line_edit_participant
+    type: line_edit
+    var: omm_participant

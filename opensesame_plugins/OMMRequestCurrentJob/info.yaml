@@ -1,0 +1,12 @@
+category: Open Monkey Mind
+description: A plugin for requesting jobs
+icon: text-x-generic
+controls: [
+    {
+        "label": "Loop for testing",
+        "name": "line_edit_test_loop",
+        "type": "line_edit",
+        "extra": "Is used for testing when OMM is not connected",
+        "var": "test_loop"
+    }
+]

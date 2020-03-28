@@ -1,0 +1,301 @@
+---
+API: 2.1
+Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perception
+  & Psychophysics*, *51*(6), 599–606. <http://doi.org/10.3758/BF03211656>
+
+  '
+Description: An attentional capture experiment, loosely based on Theeuwes (1992)
+OpenSesame: 3.3.0a70
+Platform: posix
+Title: Attentional capture
+---
+set width 1024
+set uniform_coordinates yes
+set title "Attentional capture"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/sebastiaan/git/omm-client/example_experiments"
+set disable_garbage_collection yes
+set description "Loosely based on Theeuwes (1992)"
+set coordinates relative
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background black
+
+define OMMRequestCurrentJob OMMRequestCurrentJob
+	set test_loop test_loop
+	set description "Plugin to request current job for Open Monkey Mind"
+
+define OMMSendCurrentJobResults OMMSendCurrentJobResults
+	set description "Plugin to send current job results for Open Monkey Mind"
+
+define inline_script constants
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	# The distance of the stimuli from the center
+	eccentricity = 250
+	# The size of the shapes
+	stim_size = 100
+	# The length of the line segments in the shapes
+	line_size = 75
+	# The number of stimuli
+	set_size = 8
+	# The line thickness of the stimuli
+	penwidth = 4
+	# The possible colors, shapes, and orientations
+	colors = ['blue', 'yellow']
+	shapes = ['rect', 'circle']
+	all_orientations = 0, 30, 60, 90, 120, 150
+	nontarget_orientations = 30, 60, 120, 150
+	target_orientations = [('z', 0), ('/', 90)]
+	__end__
+
+define sequence dummy_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "The main sequence of the experiment"
+	run constants always
+	run functions always
+	run test_loop always
+	run OMMRequestCurrentJob always
+	run trial_sequence always
+	run OMMSendCurrentJobResults always
+
+define sketchpad fixdot
+	set duration 495
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+
+define inline_script functions
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	def draw_premask(cnvs, x, y):
+	    
+	    """
+	    Draws a premask, which has the target shape and color, and has all possible
+	    line segments in it.
+	    
+	    arguments:
+	        cnvs:	The canvas to draw on.
+	        x:		The x coordinate.
+	        y:		The y coordinate.
+	    """
+	    
+	    if var.target_shape == 'circle':
+	        cnvs += Circle(x, y, stim_size/2, color=var.target_color)
+	    else:
+	        cnvs += Rect(
+	            x-stim_size/2,
+	            y-stim_size/2,
+	            stim_size,
+	            stim_size,
+	            color=var.target_color
+	        )
+	    for orientation in all_orientations:
+	        dx, dy = xy_from_polar(line_size/2, orientation)
+	        cnvs += Line(x+dx, y+dy, x-dx, y-dy)
+	        
+	
+	def draw_target(cnvs, x, y):
+	    
+	    """
+	    Draws a target, which has the target shape and color, and has one line
+	    segment with the target orientation in it.
+	    
+	    arguments:
+	        cnvs:	The canvas to draw on.
+	        x:		The x coordinate.
+	        y:		The y coordinate.
+	    """
+	    
+	    if var.target_shape == 'circle':
+	        cnvs += Circle(x, y, stim_size/2, color=var.target_color)
+	    else:
+	        cnvs += Rect(
+	            x-stim_size/2,
+	            y-stim_size/2,
+	            stim_size,
+	            stim_size,
+	            color=var.target_color
+	        )
+	    dx, dy = xy_from_polar(line_size/2, target_orientation)
+	    cnvs += Line(x+dx, y+dy, x-dx, y-dy)
+	    
+	
+	def draw_nontarget(cnvs, x, y, color):
+	    
+	    """
+	    Draws a non-target, which has the target shape, and a line segment with
+	    a random orientation in it (not vertical or horizontal).
+	    
+	    arguments:
+	        cnvs:	The canvas to draw on.
+	        x:		The x coordinate.
+	        y:		The y coordinate.
+	        color:	The shape color.
+	    """	
+	    
+	    if var.nontarget_shape == 'circle':
+	        cnvs += Circle(x, y, stim_size/2, color=color)
+	    else:
+	        cnvs += Rect(
+	            x-stim_size/2,
+	            y-stim_size/2,
+	            stim_size,
+	            stim_size,
+	            color=color
+	        )
+	    orientation = random.choice(nontarget_orientations)
+	    dx, dy = xy_from_polar(line_size/2, orientation)
+	    cnvs += Line(x+dx, y+dy, x-dx, y-dy)
+	__end__
+
+define sketchpad green_fixdot
+	set duration 495
+	set description "Displays stimuli"
+	draw fixdot color=green show_if=always style=default x=0 y=0 z_index=0
+
+define keyboard_response keyboard_response
+	set timeout 3000
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses "z;/"
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define loop omm_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run omm_sequence
+
+define sequence omm_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+
+define sketchpad red_fixdot
+	set duration 495
+	set description "Displays stimuli"
+	draw fixdot color=red show_if=always style=default x=0 y=0 z_index=0
+
+define loop test_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 distractor present
+	setcycle 1 distractor absent
+	run dummy_sequence
+
+define inline_script trial_script
+	set description "Executes Python code"
+	___run__
+	premask_canvas.show()
+	clock.sleep(495)
+	target_canvas.show()
+	__end__
+	___prepare__
+	import random
+	
+	# First determine the target and distractor positions. Positions are indices,
+	# i.e. values between 0 and the number of items.
+	positions = list(range(set_size))
+	random.shuffle(positions)
+	var.target_pos = positions[0]
+	if var.distractor == 'present':
+	    var.distractor_pos = positions[1]
+	else:
+	    var.distractor_pos = None
+	
+	# Get a random target orientation, and the associated correct response
+	var.correct_response, target_orientation = random.choice(target_orientations)
+	
+	# Determine the target color and shape
+	random.shuffle(colors)
+	var.target_color = colors[0]
+	var.distractor_color = colors[1]
+	random.shuffle(shapes)
+	var.target_shape = shapes[0]
+	var.nontarget_shape = shapes[1]
+	
+	# Draw the premask canvas. Premasks have the target shape and color, and have
+	# all possible line segments in it.
+	premask_canvas = Canvas()
+	premask_canvas.penwidth = penwidth
+	premask_canvas += FixDot()
+	for x, y in xy_circle(set_size, eccentricity):
+	    # defined in the `functions` item
+	    draw_premask(premask_canvas, x, y)
+	
+	# Draw the target canvas. The target canvas has three types of stimuli on it.
+	# - nontargets, which have the target color and nontarget shape
+	# - a distractor (on 50% of trials), which has the distractor color and
+	#   nontarget shape
+	# - a target, which has the target color and shape
+	target_canvas = Canvas()
+	target_canvas.penwidth = penwidth
+	target_canvas += FixDot()
+	for pos, (x, y) in enumerate(xy_circle(set_size, eccentricity)):
+	    if pos == var.target_pos:
+	        # defined in the `functions` item
+	        draw_target(target_canvas, x, y)
+	    elif pos == var.distractor_pos:
+	        # defined in the `functions` item
+	        draw_nontarget(target_canvas, x, y, color=var.distractor_color)
+	    else:
+	        # defined in the `functions` item:
+	        draw_nontarget(target_canvas, x, y, color=var.target_color)
+	__end__
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run fixdot always
+	run trial_script always
+	run keyboard_response always
+	run green_fixdot "[correct] = 1"
+	run red_fixdot "[correct] = 0"
+	run logger always
+

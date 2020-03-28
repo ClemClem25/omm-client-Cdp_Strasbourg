@@ -1,0 +1,12 @@
+1:
+    -
+        exp: attentional-capture.osexp
+        jobs:
+            - distractor: present
+            - distractor: absent
+2:
+    -
+        exp: attentional-capture.osexp
+        jobs:
+            - distractor: present
+            - distractor: absent

@@ -1,0 +1,85 @@
+---
+API: 2.1
+OpenSesame: 3.3.0a70
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "OMM Entry Point"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/sebastiaan/git/omm-client/example_experiments"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set background black
+
+define OMMAnnounce OMMAnnounce
+	set omm_participant "[response]"
+	set description "Announce-participant plugin for Open Monkey Mind"
+
+define sketchpad ask_participant_number
+	set start_response_interval no
+	set reset_variables no
+	set duration 0
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Press participant number" x=0 y=0 z_index=0
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run omm_loop always
+
+define keyboard_response get_participant_number
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+
+define repeat_cycle make_loop_infinite
+	set description "Optionally repeat a cycle from a loop"
+	set condition always
+
+define loop omm_loop
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run omm_sequence
+
+define sequence omm_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run ask_participant_number always
+	run get_participant_number always
+	run OMMAnnounce always
+	run make_loop_infinite always
+
