@@ -1,114 +1,165 @@
 # coding=utf-8
 
 from libopensesame.py3compat import *
+from libopensesame.oslogging import oslogger
+import os
+import time
+import tempfile
+import requests
+from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind
+from openmonkeymind._exceptions import (
+    NoJobsForParticipant,
+    UnknownParticipant,
+    FailedToSendJobResults,
+    InvalidJSON,
+    FailedToSetJobStates
+)
+from libopensesame.experiment import experiment
 
 
-class OpenMonkeyMind(object):
+class OpenMonkeyMind(BaseOpenMonkeyMind):
     
-    def __init__(self):
+    def __init__(self, server='127.0.0.1', port=3000, api=1):
         
-        pass
-    
+        self._server = server
+        self._port = port
+        self._api = api
+        self._base_url = 'http://{}:{}/api/v{}/'.format(server, port, api)
+        self._osexp_url = 'http://{}:{}'.format(server, port)
+        self._participant = None
+        self._study = None
+        self._job_id = None
+        self._osexp_cache = {}
+        
     @property
     def current_participant(self):
         
-        pass
+        return self._participant
     
     @property
     def current_experiment(self):
         
-        pass
+        return self._experiment
     
     @property
     def current_job(self):
         
-        pass
+        return self._job_id
         
+    def _get(self, url_suffix, on_error):
+        
+        oslogger.info('get {}'.format(url_suffix))
+        response = requests.get(self._base_url + url_suffix)
+        if not response.ok:
+            raise on_error()
+        json = response.json()
+        if not isinstance(json, dict) or 'data' not in json:
+            raise InvalidJSON()
+        print(json)
+        return json['data']
+    
+    def _patch(self, url_suffix, data, on_error):
+        
+        oslogger.info('patch {}'.format(url_suffix))
+        response = requests.patch(self._base_url + url_suffix, data)
+        if not response.ok:
+            raise on_error()
+
+    def _put(self, url_suffix, data, on_error):
+        
+        oslogger.info('patch {}'.format(url_suffix))
+        response = requests.put(self._base_url + url_suffix, data)
+        if not response.ok:
+            raise on_error()
+
+    def _get_osexp(self, json):
+        
+        path = json['osexp_path']
+        if (
+            path not in self._osexp_cache or
+            self._osexp_cache[path][0] < time.strptime(
+                json['updated_at'],
+                '%Y-%m-%d %H:%M:%S'
+            )
+        ):
+            response = requests.get(self._osexp_url + path)
+            if not response.ok:
+                raise FailedToDownloadExperiment()
+            with tempfile.NamedTemporaryFile(delete=False) as fd:
+                fd.write(response.content)
+            self._osexp_cache[path] = time.gmtime(), fd.name
+            oslogger.info('caching {} to {}'.format(path, fd.name))
+        oslogger.info('returning cached osexp {}'.format(path))
+        self._experiment = experiment(string=self._osexp_cache[path][1])
+        return self._experiment
+    
     def announce(self, participant):
         
-        """Announces a new participant, and retrieves the experiment file for
-        that participant. The returned experiment is now the current
-        experiment. The participant is now the current participant.
-        
-        Arguments:
-        participant -- a participant id
-        
-        Returns:
-        An experiment object
-        """
-
-        pass
+        json = self._get(
+            'participants/{}/announce'.format(participant),
+            NoJobsForParticipant
+        )
+        if not json['active']:
+            raise NoJobsForParticipant()
+        self._participant = participant
+        self._study = json['id']
+        return self._get_osexp(json)
         
     def request_current_job(self):
         
-        """Gets the first open job for the current experiment and participant.
-        The returned job is now the current job.
-        
-        Returns:
-        A dict with where keys are names of experimental variables, and values
-        are values. The optional special key '__inline_script__' allows
-        arbitrary Python code to be executed in the workspace of the
-        experiment.
-        """
+        json = self._get(
+            'participants/{}/{}/currentjob'.format(
+                self._participant,
+                self._study
+            ),
+            NoJobsForParticipant
+        )
+        self._job_id = json['id']
+        return {v['name']: v['value'] for v in json['variables']}
 
     def send_current_job_results(self, job_results):
         
-        """Sends results for the current job. This also changed the current job
-        status to complete. There is now no current job anymore.
+        self._patch(
+            'participants/{}/{}/result'.format(
+                self._participant,
+                self._job_id
+            ),
+            job_results,
+            FailedToSendJobResults
+        )
         
-        Arguments:
-        jon_results -- a dict where keys are experimental variables, and values
-        are values.
-        """
-        
-        pass
-    
     def get_current_job_index(self):
         
-        """Returns the index of the current job in the job table."""
-        
-        pass
-    
+        json = self._get(
+            'participants/{}/{}/currentjob_idx'.format(
+                self._participant,
+                self._study
+            ),
+            NoJobsForParticipant
+        )
+        return json['current_job_index']
+
     def get_jobs(self, from_index, to_index):
-        
-        """Returns a list of jobs between from_index and to_index, where
-        to_index is not included (i.e. Python-slice style).
-        """
         
         pass
     
     def insert_jobs(self, index, jobs):
-        
-        """Inserts a list of jobs at the specified index, such that the first
-        job in the list has the specified index. There is now no current job
-        anymore.
-        """
-        
+
         pass
     
     def delete_jobs(self, from_index, to_index):
-        
-        """Deletes all jobs between from_index and to_index, where to_index is
-        not included (i.e. Python-slice style). There is now no current job
-        anymore.
-        """
         
         pass
     
     def set_job_states(self, from_index, to_index, state):
         
-        """Sets the states of all jobs between from_index and to_index, where
-        to_index is not included (i.e. Python-slice style). There is now no
-        current job anymore.
-        
-        If a job already had results and is set to open. Then the results are
-        not reset. Rather, the job will get a second set of results.
-        """
-        
-        pass
-
-    def __reduce__(self):
-        
-        """Avoid an error during unpickling."""
-        
-        return (object, ())
+        self._put(
+            'studies/{}/jobs/state'.format(self._study),
+            {
+                'from': from_index,
+                'to': to_index,
+                'state': state,
+                'participant': self._participant
+            },
+            FailedToSetJobStates
+        )

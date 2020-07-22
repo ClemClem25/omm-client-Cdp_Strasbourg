@@ -22,7 +22,6 @@ class BaseOMMPlugin(object):
         if 'openmonkeymind' in self.python_workspace:
             self._openmonkeymind = self.python_workspace['openmonkeymind']
             return
-        from openmonkeymind import DummyMonkeyMind
-        self._openmonkeymind = DummyMonkeyMind()
+        from openmonkeymind import OpenMonkeyMind
+        self._openmonkeymind = OpenMonkeyMind()
         self.python_workspace['openmonkeymind'] = self._openmonkeymind
-        

@@ -2,12 +2,12 @@
 
 from libopensesame.py3compat import *
 import os
-from openmonkeymind._openmonkeymind import OpenMonkeyMind
+from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind
 from openmonkeymind._exceptions import NoJobsForParticipant, UnknownParticipant
 from libopensesame.experiment import experiment
 
 
-class DummyMonkeyMind(OpenMonkeyMind):
+class DummyMonkeyMind(BaseOpenMonkeyMind):
     
     def __init__(self):
         
