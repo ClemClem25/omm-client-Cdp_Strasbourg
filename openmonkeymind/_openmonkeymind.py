@@ -30,6 +30,9 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._study = None
         self._job_id = None
         self._osexp_cache = {}
+        self.verbose = False
+        if not oslogger.started:
+            oslogger.start('omm')
         
     @property
     def current_participant(self):
@@ -55,7 +58,8 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         json = response.json()
         if not isinstance(json, dict) or 'data' not in json:
             raise InvalidJSON()
-        print(json)
+        if self.verbose:
+            oslogger.info(json)
         return json['data']
     
     def _patch(self, url_suffix, data, on_error):
@@ -67,10 +71,23 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
 
     def _put(self, url_suffix, data, on_error):
         
-        oslogger.info('patch {}'.format(url_suffix))
+        oslogger.info('put {}'.format(url_suffix))
         response = requests.put(self._base_url + url_suffix, data)
         if not response.ok:
             raise on_error()
+            
+    def _delete(self, url_suffix, on_error):
+        
+        oslogger.info('delete {}'.format(url_suffix))
+        response = requests.delete(self._base_url + url_suffix, data)
+        if not response.ok:
+            raise on_error()
+        json = response.json()
+        if not isinstance(json, dict) or 'data' not in json:
+            raise InvalidJSON()
+        if self.verbose:
+            oslogger.info(json)
+        return json['data']
 
     def _get_osexp(self, json):
         
@@ -138,28 +155,45 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             NoJobsForParticipant
         )
         return json['current_job_index']
+        
+    def delete_jobs(self, from_index, to_index):
+        
+        json = self._delete('/studies/{}/jobs/{}/{}'.format(
+            self._study,
+            from_index,
+            to_index
+        ))
+        self._job_id = None
+        return json['jobs_deleted']
+        
 
     def get_jobs(self, from_index, to_index):
         
-        pass
+        # TODO: Appears to be broken in the server, because it doesn't return
+        # participant-specific info.
+        
+        raise NotImplemented()
     
     def insert_jobs(self, index, jobs):
-
-        pass
-    
-    def delete_jobs(self, from_index, to_index):
         
-        pass
-    
+        # TODO: Appears to be broken in the server. Hangs indefintely for
+        # valid insertions.
+
+        raise NotImplemented()
+
     def set_job_states(self, from_index, to_index, state):
         
-        self._put(
-            'studies/{}/jobs/state'.format(self._study),
-            {
-                'from': from_index,
-                'to': to_index,
-                'state': state,
-                'participant': self._participant
-            },
-            FailedToSetJobStates
-        )
+        # TODO: Appears to be broken in the server
+        
+        raise NotImplemented()
+        
+        # self._put(
+        #     'studies/{}/jobs/state'.format(self._study),
+        #     {
+        #         'from': from_index,
+        #         'to': to_index,
+        #         'state': state,
+        #         'participant': self._participant
+        #     },
+        #     FailedToSetJobStates
+        # )
