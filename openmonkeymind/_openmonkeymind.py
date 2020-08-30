@@ -12,12 +12,19 @@ from openmonkeymind._exceptions import (
     UnknownParticipant,
     FailedToSendJobResults,
     InvalidJSON,
-    FailedToSetJobStates
+    FailedToSetJobStates,
+    FailedToDeleteJobs,
+    FailedToInsertJobs
 )
 from libopensesame.experiment import experiment
 
 
 class OpenMonkeyMind(BaseOpenMonkeyMind):
+    
+    # Job states
+    PENDING = 1
+    STARTED = 2
+    FINISHED = 3
     
     def __init__(self, server='127.0.0.1', port=3000, api=1):
         
@@ -61,37 +68,43 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         if self.verbose:
             oslogger.info(json)
         return json['data']
-    
-    def _patch(self, url_suffix, data, on_error):
         
-        oslogger.info('patch {}'.format(url_suffix))
-        response = requests.patch(self._base_url + url_suffix, data)
-        if not response.ok:
-            raise on_error()
-
-    def _put(self, url_suffix, data, on_error):
-        
-        oslogger.info('put {}'.format(url_suffix))
-        response = requests.put(self._base_url + url_suffix, data)
-        if not response.ok:
-            raise on_error()
-            
     def _delete(self, url_suffix, on_error):
         
         oslogger.info('delete {}'.format(url_suffix))
-        response = requests.delete(self._base_url + url_suffix, data)
+        response = requests.delete(self._base_url + url_suffix)
         if not response.ok:
             raise on_error()
-        json = response.json()
-        if not isinstance(json, dict) or 'data' not in json:
-            raise InvalidJSON()
-        if self.verbose:
-            oslogger.info(json)
-        return json['data']
+        
+    def _cmd(self, desc, fnc, url_suffix, data, on_error):
+        
+        oslogger.info('{} {}'.format(desc, url_suffix))
+        response = fnc(self._base_url + url_suffix, json=data)
+        if not response.ok:
+            raise on_error(response.text)
+    
+    def _patch(self, *args):
+        
+        self._cmd('patch', requests.patch, *args)
+
+    def _put(self, *args):
+        
+        self._cmd('put', requests.put, *args)
+            
+    def _post(self, *args):
+        
+        self._cmd('post', requests.post, *args)
 
     def _get_osexp(self, json):
         
-        path = json['osexp_path']
+        print(json)
+        for f in json['files']:
+            if not f['type'] == 'experiment':
+                continue
+            path = f['path'] + f['filename']
+            break
+        else:
+            raise InvalidJSON()
         if (
             path not in self._osexp_cache or
             self._osexp_cache[path][0] < time.strptime(
@@ -132,7 +145,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             NoJobsForParticipant
         )
         self._job_id = json['id']
-        return {v['name']: v['value'] for v in json['variables']}
+        return {v['name']: v['pivot']['value'] for v in json['variables']}
 
     def send_current_job_results(self, job_results):
         
@@ -158,14 +171,36 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
     def delete_jobs(self, from_index, to_index):
         
-        json = self._delete('/studies/{}/jobs/{}/{}'.format(
-            self._study,
-            from_index,
-            to_index
-        ))
+        json = self._delete(
+            'studies/{}/jobs/{}/{}'.format(
+                self._study,
+                from_index,
+                to_index
+            ),
+            FailedToDeleteJobs
+        )
         self._job_id = None
-        return json['jobs_deleted']
+
+    def insert_jobs(self, index, jobs):
         
+        self._post(
+            'studies/{}/jobs'.format(self._study),
+            {'at': index, 'jobs': jobs},
+            FailedToInsertJobs
+        )
+
+    def set_job_states(self, from_index, to_index, state):
+        
+        self._put(
+            'studies/{}/jobs/state'.format(self._study),
+            {
+                'from': from_index,
+                'to': to_index,
+                'state': state,
+                'participant': self._participant
+            },
+            FailedToSetJobStates
+        )
 
     def get_jobs(self, from_index, to_index):
         
@@ -174,26 +209,3 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
         raise NotImplemented()
     
-    def insert_jobs(self, index, jobs):
-        
-        # TODO: Appears to be broken in the server. Hangs indefintely for
-        # valid insertions.
-
-        raise NotImplemented()
-
-    def set_job_states(self, from_index, to_index, state):
-        
-        # TODO: Appears to be broken in the server
-        
-        raise NotImplemented()
-        
-        # self._put(
-        #     'studies/{}/jobs/state'.format(self._study),
-        #     {
-        #         'from': from_index,
-        #         'to': to_index,
-        #         'state': state,
-        #         'participant': self._participant
-        #     },
-        #     FailedToSetJobStates
-        # )

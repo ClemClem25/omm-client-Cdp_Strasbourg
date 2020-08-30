@@ -8,3 +8,5 @@ class FailedToSendJobResults(Exception): pass
 class InvalidJSON(Exception): pass
 class FailedToDownloadExperiment(Exception): pass
 class FailedToSetJobStates(Exception): pass
+class FailedToDeleteJobs(Exception): pass
+class FailedToInsertJobs(Exception): pass

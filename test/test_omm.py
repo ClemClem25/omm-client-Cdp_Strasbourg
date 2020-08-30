@@ -3,26 +3,20 @@
 from openmonkeymind import OpenMonkeyMind
 from libopensesame.experiment import experiment
 import sqlite3
+import os
 import sys
-
-OMM_SERVER_PATH = '/home/sebastiaan/git/omm-server'
 
 
 def test_init():
     
     global omm
     omm = OpenMonkeyMind()
+    omm.verbose = True
+
 
 def test_announce():
     
-    conn = sqlite3.connect(OMM_SERVER_PATH + '/database/development.sqlite')
-    for (participant,) in conn.cursor().execute(
-        'select identifier from participants'
-    ):
-        print(participant)
-        break
-    conn.close()
-    exp = omm.announce(participant)
+    exp = omm.announce(os.environ['PARTICIPANT'])
     assert(isinstance(exp, experiment))
     
     
@@ -31,10 +25,12 @@ def test_request_current_job():
     job = omm.request_current_job()
     assert(isinstance(job, dict))
 
+
 def test_get_current_job_index():
     
     job_index = omm.get_current_job_index()
     assert(isinstance(job_index, int))
+
 
 def test_send_current_job_results():
     
@@ -45,7 +41,23 @@ def test_send_current_job_results():
     }
     omm.send_current_job_results(results)
 
-def delete_jobs():
     
-    n_deleted = omm.delete_jobs(1, 3)
-    assert(n_deleted == 2)
+def test_insert_jobs():
+    
+    omm.insert_jobs(
+        3,
+        [
+            {"distractor": "new"},
+            {"distractor": "new"}
+        ]
+    )
+    
+
+def test_delete_jobs():
+    
+    omm.delete_jobs(1, 2)
+
+    
+def test_set_job_states():
+    
+    omm.set_job_states(1, 3, omm.FINISHED)
