@@ -97,11 +97,10 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
 
     def _get_osexp(self, json):
         
-        print(json)
         for f in json['files']:
             if not f['type'] == 'experiment':
                 continue
-            path = f['path'] + f['filename']
+            path = f['path']
             break
         else:
             raise InvalidJSON()
@@ -149,6 +148,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
 
     def send_current_job_results(self, job_results):
         
+        oslogger.info(job_results)
         self._patch(
             'participants/{}/{}/result'.format(
                 self._participant,
