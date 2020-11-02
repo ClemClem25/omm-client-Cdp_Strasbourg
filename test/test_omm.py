@@ -142,7 +142,7 @@ def skip_to_second_job():
     assert(omm.current_job == 4)
     ref_job = DummyJob(
         4,
-        state=DummyJob.PENDING,
+        state=DummyJob.STARTED,
         data={'distractor': 'present', 'correct': 0}
     )
     del cur_job['_time']

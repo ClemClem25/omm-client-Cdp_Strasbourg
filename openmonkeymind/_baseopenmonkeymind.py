@@ -61,7 +61,7 @@ class BaseJob:
         
         for key, value in self._data.items():
             yield key, value
-            
+                        
     def __eq__(self, other):
 
         return (

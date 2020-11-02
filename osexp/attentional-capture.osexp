@@ -46,6 +46,8 @@ set background black
 define OMMRequestCurrentJob OMMRequestCurrentJob
 	set test_loop test_loop
 	set description "Plugin to request current job for Open Monkey Mind"
+	set block_size 4
+	set block_select yes
 
 define OMMSendCurrentJobResults OMMSendCurrentJobResults
 	set description "Plugin to send current job results for Open Monkey Mind"
@@ -83,10 +85,11 @@ define sequence experiment
 	run functions always
 	run test_loop always
 	run OMMRequestCurrentJob always
-	run print_current_job_index always
 	run trial_sequence always
 	run OMMSendCurrentJobResults always
-	run repeat_on_error always
+	run repeat_practice_if_necessary always
+	run practice_done never
+	run practice_repeat never
 
 define sketchpad fixdot
 	set duration 495
@@ -195,28 +198,49 @@ define logger logger
 	set description "Logs experimental data"
 	set auto_log yes
 
-define inline_script print_current_job_index
-	set description "Executes Python code"
-	___run__
-	try:
-	    job_index = openmonkeymind.get_current_job_index()
-	except:
-	    job_index = None
-	print('current_job_index: {}'.format(job_index))
-	__end__
-	set _prepare ""
+define feedback practice_done
+	set reset_variables yes
+	set duration keypress
+	set description "Provides feedback to the participant"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You successfully completed the practice phase!<br /><br />Press any key to continue" x=0 y=0 z_index=0
+
+define feedback practice_repeat
+	set reset_variables yes
+	set duration keypress
+	set description "Provides feedback to the participant"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Let's do a little more practice<br /><br />Press any key to continue" x=0 y=0 z_index=0
 
 define sketchpad red_fixdot
 	set duration 495
 	set description "Displays stimuli"
 	draw fixdot color=red show_if=always style=default x=0 y=0 z_index=0
 
-define inline_script repeat_on_error
+define inline_script repeat_practice_if_necessary
 	set description "Executes Python code"
 	___run__
-	if job_index is not None:
-	    print('Repeating {}'.format(job_index))
-	    openmonkeymind.set_job_states(job_index, job_index + 1, openmonkeymind.PENDING)
+	from openmonkeymind import Job
+	
+	PRACTICE_LENGTH = 4
+	MIN_ACC = .75
+	
+	
+	if omm.current_participant is not None:
+	    print('Index in block: {}'.format(var.omm_job_index_in_block))
+	    if var.omm_job_index_in_block == 4 and var.omm_block_index == 1:
+	        practice_jobs = omm.get_jobs(1, PRACTICE_LENGTH + 1)
+	        acc = sum(job['correct'] for job in practice_jobs) / PRACTICE_LENGTH
+	        print('accuracy: {}'.format(acc))
+	        if acc < MIN_ACC:
+	            print('Before:')
+	            for j in omm.get_jobs(1, 9):
+	                print(j.id_, j.state)
+	            omm.set_job_states(1, PRACTICE_LENGTH + 1, Job.PENDING)
+	            print('After:')
+	            for j in omm.get_jobs(1, 9):
+	                print(j.id_, j.state)
+	            items['practice_repeat'].run()
+	        else:
+	            items['practice_done'].run()
 	__end__
 	set _prepare ""
 
@@ -240,6 +264,7 @@ define inline_script trial_script
 	premask_canvas.show()
 	clock.sleep(495)
 	target_canvas.show()
+	print('Index in block: {}'.format(var.omm_job_index_in_block))
 	__end__
 	___prepare__
 	import random

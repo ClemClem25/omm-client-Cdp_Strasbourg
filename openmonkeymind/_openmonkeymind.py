@@ -47,7 +47,7 @@ class Job(BaseJob):
 
 
 class OpenMonkeyMind(BaseOpenMonkeyMind):
-    
+
     def __init__(self, server='127.0.0.1', port=3000, api=1):
         
         self._server = server
@@ -170,15 +170,14 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
     def request_job(self, job_index):
         
-        (job, ) = self.get_jobs(job_index, job_index + 1)
         self.set_job_states(job_index, job_index + 1, Job.STARTED)
+        (job, ) = self.get_jobs(job_index, job_index + 1)
         self._job_id = job.id_
         return job
 
     def send_current_job_results(self, job_results):
         
         data = {'data': job_results}
-        oslogger.info(data)
         self._patch(
             'participants/{}/{}/result'.format(
                 self._participant,
@@ -247,5 +246,4 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
                 'to': to_index,
             }
         )
-        oslogger.info(json)
         return [Job(job) for job in json]

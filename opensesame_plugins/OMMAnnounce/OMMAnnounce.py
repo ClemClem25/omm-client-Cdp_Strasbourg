@@ -24,7 +24,7 @@ class OMMAnnounce(BaseOMMPlugin, Item):
         if hasattr(self.experiment, 'window'):
             exp.window = self.experiment.window
             exp.python_workspace['win'] = self.experiment.window
-        exp.python_workspace['openmonkeymind'] = self._openmonkeymind
+        exp.python_workspace['omm'] = self._openmonkeymind
         exp.run()
 
 

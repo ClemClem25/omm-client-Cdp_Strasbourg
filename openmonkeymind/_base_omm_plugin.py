@@ -19,9 +19,9 @@ class BaseOMMPlugin(object):
         
         if hasattr(self, '_openmonkeymind'):
             return
-        if 'openmonkeymind' in self.python_workspace:
-            self._openmonkeymind = self.python_workspace['openmonkeymind']
+        if 'omm' in self.python_workspace:
+            self._openmonkeymind = self.python_workspace['omm']
             return
         from openmonkeymind import OpenMonkeyMind
         self._openmonkeymind = OpenMonkeyMind()
-        self.python_workspace['openmonkeymind'] = self._openmonkeymind
+        self.python_workspace['omm'] = self._openmonkeymind
