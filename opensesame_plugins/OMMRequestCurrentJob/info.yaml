@@ -1,6 +1,5 @@
 category: Open Monkey Mind
 description: A plugin for requesting jobs
-icon: text-x-generic
 controls:
     -
         label: Loop for testing

@@ -7,16 +7,14 @@ Copyright 2020 le Centre National de la Recherche (CNRS)
 
 ## Requirements
 
-OpenSesame 3.3.X
+- OpenSesame 3.3
+- OpenMonkeyMind server software
 
 
 ## Quick start
 
 - Open `osexp\omm-entry-point.osexp` in OpenSesame and start it.
 - Enter a participant number to start a trial.
-- Only dummy mode is currently functional.
-- The jobs for dummy mode are defined in `openmonkeymind\data\dummy-jobs.yaml`. The `exp` key refers to files in the `osexp` folder.
-- By default, only participants 1 and 2 are defined.
 
 
 ## Implementing an experiment for OMM
@@ -33,3 +31,5 @@ Typically (but not necessarily) an OMM experiment consists of a single trial. A 
 ## License
 
 TODO
+
+Icons are based on emojis designed by OpenMoji – the open-source emoji and icon project. License: CC BY-SA 4.0
