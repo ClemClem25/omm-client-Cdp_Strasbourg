@@ -6,7 +6,8 @@ import os
 import time
 import tempfile
 import requests
-from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind
+import json
+from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
 from openmonkeymind._exceptions import (
     NoJobsForParticipant,
     UnknownParticipant,
@@ -14,17 +15,38 @@ from openmonkeymind._exceptions import (
     InvalidJSON,
     FailedToSetJobStates,
     FailedToDeleteJobs,
-    FailedToInsertJobs
+    FailedToInsertJobs,
+    FailedToGetJobs
 )
 from libopensesame.experiment import experiment
 
 
-class OpenMonkeyMind(BaseOpenMonkeyMind):
+class Job(BaseJob):
     
-    # Job states
-    PENDING = 1
-    STARTED = 2
-    FINISHED = 3
+    def __init__(self, json):
+        
+        self._id = json['id']
+        self._data = {
+            v['name']: v['pivot']['value']
+            for v in json['variables']
+        }
+        # The pivot field contains the results data. This is not present when
+        # we're requesting the current job to be done, in which case we infer
+        # that the job is now started.
+        if 'pivot' in json and json['pivot']['data'] is not None:
+            # The pivot data can contain multiple entries, in case the job was
+            # reset and done again. In this case, the field is a list, and we
+            # get the last entry from the list.
+            if isinstance(json['pivot']['data'], list):
+                self._data.update(json['pivot']['data'][-1])
+            else:
+                self._data.update(json['pivot']['data'])
+            self._state = json['pivot']['status_id']
+        else:
+            self._state = Job.STARTED
+
+
+class OpenMonkeyMind(BaseOpenMonkeyMind):
     
     def __init__(self, server='127.0.0.1', port=3000, api=1):
         
@@ -56,15 +78,15 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
         return self._job_id
         
-    def _get(self, url_suffix, on_error):
+    def _get(self, url_suffix, on_error, data=None):
         
         oslogger.info('get {}'.format(url_suffix))
-        response = requests.get(self._base_url + url_suffix)
+        response = requests.get(self._base_url + url_suffix, json=data)
         if not response.ok:
             raise on_error()
         json = response.json()
         if not isinstance(json, dict) or 'data' not in json:
-            raise InvalidJSON()
+            raise InvalidJSON(safe_decode(json))
         if self.verbose:
             oslogger.info(json)
         return json['data']
@@ -103,7 +125,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             path = f['path']
             break
         else:
-            raise InvalidJSON()
+            raise InvalidJSON(safe_decode(json))
         if (
             path not in self._osexp_cache or
             self._osexp_cache[path][0] < time.strptime(
@@ -144,19 +166,21 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             NoJobsForParticipant
         )
         self._job_id = json['id']
-        return {v['name']: v['pivot']['value'] for v in json['variables']}
+        return Job(json)
 
     def send_current_job_results(self, job_results):
         
-        oslogger.info(job_results)
+        data = {'data': job_results}
+        oslogger.info(data)
         self._patch(
             'participants/{}/{}/result'.format(
                 self._participant,
                 self._job_id
             ),
-            job_results,
+            data,
             FailedToSendJobResults
         )
+        self._job_id = None
         
     def get_current_job_index(self):
         
@@ -201,11 +225,20 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             },
             FailedToSetJobStates
         )
+        self._job_id = None
 
     def get_jobs(self, from_index, to_index):
         
-        # TODO: Appears to be broken in the server, because it doesn't return
-        # participant-specific info.
-        
-        raise NotImplemented()
-    
+        json = self._get(
+            'participants/{}/{}/jobs'.format(
+                self._participant,
+                self._study
+            ),
+            NoJobsForParticipant,
+            data={
+                'from': from_index,
+                'to': to_index,
+            }
+        )
+        oslogger.info(json)
+        return [Job(job) for job in json]

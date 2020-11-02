@@ -3,8 +3,80 @@
 from libopensesame.py3compat import *
 
 
-class BaseOpenMonkeyMind(object):
+class BaseJob:
     
+    # Job states
+    PENDING = 1
+    STARTED = 2
+    FINISHED = 3
+    
+    def __init__(self):
+        
+        self._state = None
+        self._id = None
+        self._data = {}
+
+    @property
+    def state(self):
+        
+        return self._state
+    
+    @property
+    def id_(self):
+        
+        return self._id
+    
+    @property
+    def finished(self):
+        
+        return self._state == BaseJob.FINISHED
+    
+    @property
+    def started(self):
+        
+        return self._state == BaseJob.STARTED
+    
+    @property
+    def pending(self):
+        
+        return self._state == BaseJob.PENDING
+
+    def __getitem__(self, key):
+        
+        return self._data[key]
+        
+    def __iter__(self):
+        
+        for key, value in self._data.items():
+            yield key, value
+            
+    def __eq__(self, other):
+
+        return (
+            self.id_ == other.id_ and
+            self.state == other.state and
+            self._data == other._data
+        )
+        
+    def __str__(self):
+        
+        return '{}:{}:{}'.format(self.id_, self.state, self._data)
+    
+    def __repr__(self):
+        
+        return '{}:{}:{}'.format(self.id_, self.state, self._data)
+        
+    def __contains__(self, key):
+        
+        return key in self._data
+    
+    def __delitem__(self, key):
+        
+        del self._data[key]
+
+
+class BaseOpenMonkeyMind(object):
+
     def __init__(self):
         
         pass
@@ -67,13 +139,16 @@ class BaseOpenMonkeyMind(object):
     
     def get_current_job_index(self):
         
-        """Returns the index of the current job in the job table."""
+        """Returns the index of the current job in the job table. This reflects
+        the order of the job table and is therefore different from the job is
+        as provided by the current_job property.
+        """
         
         pass
     
     def get_jobs(self, from_index, to_index):
         
-        """Returns a list of jobs between from_index and to_index, where
+        """Returns a list of Job objects between from_index and to_index, where
         to_index is not included (i.e. Python-slice style).
         """
         

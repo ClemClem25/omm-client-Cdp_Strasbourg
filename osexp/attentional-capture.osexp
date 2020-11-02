@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.0a70
+OpenSesame: 3.3.6a1
 Platform: posix
 Title: Attentional capture
 ---
@@ -83,8 +83,10 @@ define sequence experiment
 	run functions always
 	run test_loop always
 	run OMMRequestCurrentJob always
+	run print_current_job_index always
 	run trial_sequence always
 	run OMMSendCurrentJobResults always
+	run repeat_on_error always
 
 define sketchpad fixdot
 	set duration 495
@@ -193,10 +195,30 @@ define logger logger
 	set description "Logs experimental data"
 	set auto_log yes
 
+define inline_script print_current_job_index
+	set description "Executes Python code"
+	___run__
+	try:
+	    job_index = openmonkeymind.get_current_job_index()
+	except:
+	    job_index = None
+	print('current_job_index: {}'.format(job_index))
+	__end__
+	set _prepare ""
+
 define sketchpad red_fixdot
 	set duration 495
 	set description "Displays stimuli"
 	draw fixdot color=red show_if=always style=default x=0 y=0 z_index=0
+
+define inline_script repeat_on_error
+	set description "Executes Python code"
+	___run__
+	if job_index is not None:
+	    print('Repeating {}'.format(job_index))
+	    openmonkeymind.set_job_states(job_index, job_index + 1, openmonkeymind.PENDING)
+	__end__
+	set _prepare ""
 
 define loop test_loop
 	set source_file ""

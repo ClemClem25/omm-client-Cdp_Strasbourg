@@ -10,3 +10,4 @@ class FailedToDownloadExperiment(Exception): pass
 class FailedToSetJobStates(Exception): pass
 class FailedToDeleteJobs(Exception): pass
 class FailedToInsertJobs(Exception): pass
+class FailedToGetJobs(Exception): pass

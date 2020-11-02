@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.3.4a2
+OpenSesame: 3.3.6a1
 Platform: posix
 ---
 set width 1024
@@ -37,7 +37,7 @@ set canvas_backend psycho
 set background black
 
 define OMMAnnounce OMMAnnounce
-	set omm_participant QaXFmoPC
+	set omm_participant 1
 	set description "Announce-participant plugin for Open Monkey Mind"
 
 define sketchpad ask_participant_number
@@ -79,8 +79,8 @@ define loop omm_loop
 define sequence omm_sequence
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run ask_participant_number always
-	run get_participant_number always
+	run ask_participant_number never
+	run get_participant_number never
 	run OMMAnnounce always
 	run make_loop_infinite always
 
