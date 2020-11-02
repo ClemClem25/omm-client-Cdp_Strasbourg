@@ -167,6 +167,13 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         )
         self._job_id = json['id']
         return Job(json)
+        
+    def request_job(self, job_index):
+        
+        (job, ) = self.get_jobs(job_index, job_index + 1)
+        self.set_job_states(job_index, job_index + 1, Job.STARTED)
+        self._job_id = job.id_
+        return job
 
     def send_current_job_results(self, job_results):
         

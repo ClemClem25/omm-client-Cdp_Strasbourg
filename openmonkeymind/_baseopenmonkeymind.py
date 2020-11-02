@@ -5,6 +5,18 @@ from libopensesame.py3compat import *
 
 class BaseJob:
     
+    """A job consists of:
+    
+    - A state, which can be PENDING, STARTED, or FINISHED
+    - An id, which uniquely identifies the job. The id is not an index, that
+      is, it does not indicate the position of the job in the job table.
+    - A set of job variables, such as experimental conditions.
+    - A set of result variables, such as response variables. A job can have
+      multiple result variables if the job has been reset and then repeated. In
+      that case, the last set of result variables is included.
+    """
+    
+    
     # Job states
     PENDING = 1
     STARTED = 2
@@ -113,14 +125,29 @@ class BaseOpenMonkeyMind(object):
         
     def request_current_job(self):
         
-        """Gets the first open job for the current experiment and participant.
-        The returned job is now the current job.
+        """Gets the first open job for the current experiment and participant,
+        i.e. the first job with a PENDING or STARTED status. The returned job
+        is now the current job. The state of the job on the server is set to
+        STARTED.
         
         Returns:
-        A dict with where keys are names of experimental variables, and values
-        are values. The optional special key '__inline_script__' allows
-        arbitrary Python code to be executed in the workspace of the
-        experiment.
+        A Job object.
+        """
+        
+        pass
+    
+    def request_job(self, job_index):
+        
+        """Gets the first open job for the current experiment and participant,
+        i.e. the first job with a PENDING or STARTED status. The returned job
+        is now the current job. The state of the job on the server is set to
+        STARTED.
+        
+        Arguments:
+        job_index -- The index of the job to request.
+        
+        Returns:
+        A Job object.
         """
         
         pass
@@ -128,7 +155,7 @@ class BaseOpenMonkeyMind(object):
     def send_current_job_results(self, job_results):
         
         """Sends results for the current job. This also changed the current job
-        status to complete. There is now no current job anymore.
+        status to FINISHED. There is now no current job anymore.
         
         Arguments:
         jon_results -- a dict where keys are experimental variables, and values
@@ -148,8 +175,11 @@ class BaseOpenMonkeyMind(object):
     
     def get_jobs(self, from_index, to_index):
         
-        """Returns a list of Job objects between from_index and to_index, where
-        to_index is not included (i.e. Python-slice style).
+        """Get all jobs between from_index and to_index, where to_index is not
+        included (i.e. Python-slice style). The first job has index 1.
+        
+        Returns:
+        A list of Job objects.
         """
         
         pass
@@ -159,6 +189,11 @@ class BaseOpenMonkeyMind(object):
         """Inserts a list of jobs at the specified index, such that the first
         job in the list has the specified index. There is now no current job
         anymore.
+        
+        Arguments:
+        index -- The job index to insert after.
+        jobs -- A list of dict objects, where the variables and values are
+                keys and values of the dict.
         """
         
         pass

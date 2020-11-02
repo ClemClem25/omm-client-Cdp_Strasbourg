@@ -133,6 +133,40 @@ def reset_jobs():
     
     omm.set_job_states(1, 3, DummyJob.PENDING)
     
+    
+def skip_to_second_job():
+    
+    assert(omm.get_current_job_index() == 1)
+    assert(omm.current_job is None)
+    cur_job = omm.request_job(2)
+    assert(omm.current_job == 4)
+    ref_job = DummyJob(
+        4,
+        state=DummyJob.PENDING,
+        data={'distractor': 'present', 'correct': 0}
+    )
+    del cur_job['_time']
+    if ref_job != cur_job:
+        raise ValueError('{} != {}'.format(ref_job, cur_job))
+
+
+def send_second_results_after_skip():
+    
+    omm.send_current_job_results({'correct': 1})
+    check_jobs([
+        DummyJob(
+            3,
+            state=DummyJob.PENDING,
+            data={'distractor': 'absent', 'correct': 1}
+        ),
+        DummyJob(
+            4,
+            state=DummyJob.FINISHED,
+            data={'distractor': 'present', 'correct': 1}
+        )
+    ])
+    assert(omm.current_job is None)
+
 
 def test_scenario():
     
@@ -149,6 +183,9 @@ def test_scenario():
     send_first_results()
     get_second_job()
     send_second_results()
+    reset_jobs()
+    skip_to_second_job()
+    send_second_results_after_skip()
 
 
 if __name__ == '__main__':
