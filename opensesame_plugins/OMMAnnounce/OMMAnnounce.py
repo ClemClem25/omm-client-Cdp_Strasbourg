@@ -29,6 +29,7 @@ class OMMAnnounce(BaseOMMPlugin, Item):
         exp.init_display = lambda: None
         exp.end = lambda: None
         exp.window = self.experiment.window
+        exp.logfile = self.experiment.logfile
         exp.python_workspace['win'] = self.experiment.window
         exp.python_workspace['omm'] = self._openmonkeymind
         # A few back-end-specific properties need to be copied to the
