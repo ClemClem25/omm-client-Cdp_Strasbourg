@@ -33,17 +33,18 @@ class Job(BaseJob):
         # The pivot field contains the results data. This is not present when
         # we're requesting the current job to be done, in which case we infer
         # that the job is now started.
-        if 'pivot' in json and json['pivot']['data'] is not None:
-            # The pivot data can contain multiple entries, in case the job was
-            # reset and done again. In this case, the field is a list, and we
-            # get the last entry from the list.
+        if 'pivot' not in json:
+            self._state = Job.STARTED
+            return
+        # The pivot data can contain multiple entries, in case the job was
+        # reset and done again. In this case, the field is a list, and we
+        # get the last entry from the list.
+        if json['pivot']['data'] is not None:
             if isinstance(json['pivot']['data'], list):
                 self._data.update(json['pivot']['data'][-1])
             else:
                 self._data.update(json['pivot']['data'])
-            self._state = json['pivot']['status_id']
-        else:
-            self._state = Job.STARTED
+        self._state = json['pivot'].get('status_id', Job.STARTED)
 
 
 class OpenMonkeyMind(BaseOpenMonkeyMind):

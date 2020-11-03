@@ -34,9 +34,10 @@ def check_jobs(ref_jobs):
     
     act_jobs = omm.get_jobs(1, len(ref_jobs))
     for ref_job, act_job in zip(ref_jobs, act_jobs):
-        # We remove the _time field, because it has an upredictable value
-        if '_time' in act_job:
-            del act_job['_time']
+        # We remove the _time and timestamp fields because they're 
+        # unpredictable
+        if 'timestamp' in act_job:
+            del act_job['timestamp']
         if ref_job != act_job:
             raise ValueError('{} != {}'.format(ref_job, act_job))
 
@@ -57,8 +58,8 @@ def insert_jobs():
         [{'distractor': 'absent'}, {'distractor': 'present'}]
     )
     check_jobs([
-        DummyJob(3, state=DummyJob.STARTED, data={'distractor': 'absent'}),
-        DummyJob(4, state=DummyJob.STARTED, data={'distractor': 'present'})
+        DummyJob(3, state=DummyJob.PENDING, data={'distractor': 'absent'}),
+        DummyJob(4, state=DummyJob.PENDING, data={'distractor': 'present'})
     ])
     assert(omm.current_job is None)
     
@@ -89,7 +90,7 @@ def send_first_results():
         ),
         DummyJob(
             4,
-            state=DummyJob.STARTED,
+            state=DummyJob.PENDING,
             data={'distractor': 'present'}
         )
     ])
@@ -145,7 +146,7 @@ def skip_to_second_job():
         state=DummyJob.STARTED,
         data={'distractor': 'present', 'correct': 0}
     )
-    del cur_job['_time']
+    del cur_job['timestamp']
     if ref_job != cur_job:
         raise ValueError('{} != {}'.format(ref_job, cur_job))
 
