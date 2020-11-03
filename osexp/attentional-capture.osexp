@@ -49,9 +49,6 @@ define OMMRequestCurrentJob OMMRequestCurrentJob
 	set block_size 4
 	set block_select yes
 
-define OMMSendCurrentJobResults OMMSendCurrentJobResults
-	set description "Plugin to send current job results for Open Monkey Mind"
-
 define inline_script constants
 	set description "Executes Python code"
 	set _run ""
@@ -86,7 +83,6 @@ define sequence experiment
 	run test_loop always
 	run OMMRequestCurrentJob always
 	run trial_sequence always
-	run OMMSendCurrentJobResults always
 	run repeat_practice_if_necessary always
 	run practice_done never
 	run practice_repeat never
@@ -196,7 +192,11 @@ define keyboard_response keyboard_response
 
 define logger logger
 	set description "Logs experimental data"
-	set auto_log yes
+	set auto_log no
+	log correct
+	log distractor
+	log response
+	log response_time
 
 define feedback practice_done
 	set reset_variables yes
