@@ -23,5 +23,9 @@ class BaseOMMPlugin(object):
             self._openmonkeymind = self.python_workspace['omm']
             return
         from openmonkeymind import OpenMonkeyMind
-        self._openmonkeymind = OpenMonkeyMind()
+        self._openmonkeymind = OpenMonkeyMind(
+            server=self.var.omm_server,
+            port=self.var.omm_port,
+            api=self.var.omm_api
+        )
         self.python_workspace['omm'] = self._openmonkeymind

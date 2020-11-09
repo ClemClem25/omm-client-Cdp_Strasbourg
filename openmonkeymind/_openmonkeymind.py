@@ -59,25 +59,11 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._participant = None
         self._study = None
         self._job_id = None
+        self._job_count = None
         self._osexp_cache = {}
         self.verbose = False
         if not oslogger.started:
             oslogger.start('omm')
-        
-    @property
-    def current_participant(self):
-        
-        return self._participant
-    
-    @property
-    def current_experiment(self):
-        
-        return self._experiment
-    
-    @property
-    def current_job(self):
-        
-        return self._job_id
         
     def _get(self, url_suffix, on_error, data=None):
         
@@ -155,9 +141,10 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             raise NoJobsForParticipant()
         self._participant = participant
         self._study = json['id']
+        self._job_count = json['jobs_count']
         return self._get_osexp(json)
         
-    def request_current_job(self):
+    def _request_current_job(self):
         
         json = self._get(
             'participants/{}/{}/currentjob'.format(
@@ -169,8 +156,10 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._job_id = json['id']
         return Job(json)
         
-    def request_job(self, job_index):
+    def request_job(self, job_index=None):
         
+        if job_index is None:
+            return self._request_current_job()
         self.set_job_states(job_index, job_index + 1, Job.STARTED)
         (job, ) = self.get_jobs(job_index, job_index + 1)
         self._job_id = job.id_

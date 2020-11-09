@@ -5,18 +5,31 @@ from libopensesame.py3compat import *
 from libopensesame.item import Item
 from libopensesame.oslogging import oslogger
 from libopensesame.exceptions import osexception
+from libopensesame.inline_script import inline_script as InlineScript
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 from openmonkeymind import BaseOMMPlugin
 
 
-class OMMRequestCurrentJob(BaseOMMPlugin, Item):
+IGNORE_KEYS = (
+    'omm_job_index',
+    'omm_block_index',
+    'omm_job_index_in_block'
+)
 
-    description = u'Plugin to request current job for Open Monkey Mind'
+
+class OMMRequestJob(BaseOMMPlugin, InlineScript):
+
+    description = u'Plugin to request a job for Open Monkey Mind'
     
     def reset(self):
         
         self.var.block_select = 'no'
         self.var.block_size = 10
+        InlineScript.reset(self)
+        
+    def run(self):
+        
+        InlineScript.run(self)
         
     def prepare(self):
 
@@ -28,7 +41,9 @@ class OMMRequestCurrentJob(BaseOMMPlugin, Item):
         current_job_index = self._openmonkeymind.get_current_job_index()
         if self.var.block_select == 'no':
             self.experiment.var.omm_job_index = current_job_index
-            job = self._openmonkeymind.request_current_job()
+            self.experiment.var.omm_block_index = None
+            self.experiment.var.omm_job_index_in_block = None
+            job = self._openmonkeymind.request_job()
         else:
             # To randomly select a job from the current block, we:
             # - Get the index of the next job
@@ -65,40 +80,63 @@ class OMMRequestCurrentJob(BaseOMMPlugin, Item):
             self.experiment.var.omm_job_index = job_index
             self.experiment.var.omm_block_index = block_index
             self.experiment.var.omm_job_index_in_block = job_index_in_block
+        self.experiment.var.omm_job_id = job.id_
+        self.experiment.var.omm_job_count = self._openmonkeymind.job_count
         for key, val in job:
-            if key not in (
-                'omm_job_index',
-                'omm_block_index',
-                'omm_job_index_in_block'
-            ):
-                self.experiment.var.set(key, val)
-            
+            self._set_variable(key, val)
+        InlineScript.prepare(self)
+        
     def _prepare_test(self):
         
         dm = self.experiment.items[
             self.var.test_loop
         ]._create_live_datamatrix()
         self.experiment.var.omm_job_index = None
-        for name, val in dm[0]:
-            if isinstance(val, basestring) and val.startswith(u'='):
-                try:
-                    val = self.python_workspace._eval(val[1:])
-                except Exception as e:
-                    raise osexception(
-                        u'Error evaluating Python expression in loop table',
-                        line_offset=0,
-                        item=self.name,
-                        phase=u'run',
-                        exception=e
-                    )
-            self.experiment.var.set(name, val)
+        self.experiment.var.omm_job_id = None
+        self.experiment.var.omm_job_count = None
+        self.experiment.var.omm_block_index = None
+        self.experiment.var.omm_job_index_in_block = None
+        for key, val in dm[0]:
+            self._set_variable(key, val)
+        InlineScript.prepare(self)
+        
+    def coroutine(self, coroutines):
+        
+        raise NotImplementedError()
+        
+    def var_info(self):
+        
+        return []
+        
+    def _set_variable(self, key, val):
+        
+        if key in IGNORE_KEYS:
+            return
+        if key == '_run':
+            self.var._run = val
+            return
+        if key == '_prepare':
+            self.var._prepare = val
+            return
+        if isinstance(val, basestring) and val.startswith(u'='):
+            try:
+                val = self.python_workspace._eval(val[1:])
+            except Exception as e:
+                raise osexception(
+                    u'Error evaluating Python expression in job variable',
+                    line_offset=0,
+                    item=self.name,
+                    phase=u'prepare',
+                    exception=e
+                )
+        self.experiment.var.set(key, val)
 
 
-class qtOMMRequestCurrentJob(OMMRequestCurrentJob, QtAutoPlugin):
+class qtOMMRequestJob(OMMRequestJob, QtAutoPlugin):
 
     def __init__(self, name, experiment, script=None):
 
-        OMMRequestCurrentJob.__init__(self, name, experiment, script)
+        OMMRequestJob.__init__(self, name, experiment, script)
         QtAutoPlugin.__init__(self, __file__)
         
     def apply_edit_changes(self):

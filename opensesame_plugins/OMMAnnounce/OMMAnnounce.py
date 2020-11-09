@@ -15,6 +15,9 @@ class OMMAnnounce(BaseOMMPlugin, Item):
     def reset(self):
 
         self.var.omm_participant = '[participant]'
+        self.var.omm_server = '127.0.0.1'
+        self.var.omm_port = 3000
+        self.var.omm_api = 1
         
     def run(self):
         

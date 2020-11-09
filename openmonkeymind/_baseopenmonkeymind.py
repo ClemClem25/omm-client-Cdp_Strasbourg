@@ -88,139 +88,228 @@ class BaseJob:
 
 
 class BaseOpenMonkeyMind(object):
+    
+    """
+    desc: |
+        Allows for programmatic interaction with the OpenMonkeyMind server.
+        Lives as the `omm` object in the Python workspace in OpenSesame
+        experiments.    
+    """
 
     def __init__(self):
         
-        pass
+        self._participant = None
+        self._experiment = None
+        self._job_id = None
+        self._study = None
+        self._job_count = None
     
     @property
     def current_participant(self):
         
-        pass
+        """
+        name: current_participant
+        desc: The identifier of the currently announced participant.
+        """
+        
+        return self._participant
     
     @property
-    def current_experiment(self):
+    def current_study(self):
         
-        pass
+        """
+        name: current_study
+        desc: The id of the current study.
+        """
+        
+        return self._study
     
     @property
     def current_job(self):
         
-        pass
+        """
+        name: current_job
+        desc: The id of the current job. (This does not correspond to the
+              position of the job in the job table. For that, see
+              `get_current_job_index()`.)
+        """        
+        
+        return self._job_id
+    
+    @property
+    def job_count(self):
+        
+        """
+        name: job_count
+        desc: The number of jobs in the job table.
+        """
+        
+        return self._job_count
+    
+    @property
+    def connected(self):
+        
+        """
+        name: connected
+        desc: `True` when connected to a server, `False` otherwise.
+        """
+        
+        return self._paricipant is not None
         
     def announce(self, participant):
         
-        """Announces a new participant, and retrieves the experiment file for
-        that participant. The returned experiment is now the current
-        experiment. The participant is now the current participant.
+        """
+        desc: |
+            Announces a new participant, and retrieves the experiment file for
+            that participant. The returned experiment is now the current
+            experiment. The participant is now the current participant.
         
-        Arguments:
-        participant -- a participant id
+        arguments:
+            participant:
+                desc: A participant id
+                type: [str, int]
         
-        Returns:
-        An experiment object
+        returns:
+            An experiment object.
         """
 
         pass
+
+    def request_job(self, job_index=None):
         
-    def request_current_job(self):
-        
-        """Gets the first open job for the current experiment and participant,
-        i.e. the first job with a PENDING or STARTED status. The returned job
-        is now the current job. The state of the job on the server is set to
-        STARTED.
-        
-        Returns:
-        A Job object.
         """
+        desc: |
+            Gets a job for the current experiment and participant, i.e. the
+            first job with a PENDING or STARTED status. The returned job is now
+            the current job. The state of the job on the server is set to
+            STARTED.
         
-        pass
-    
-    def request_job(self, job_index):
+        keywords:
+            job_index:
+                desc:
+                    The index of the job to request. If this is None, then the
+                    next open job (i.e. the first job a PENDING or STARTED
+                    status) is retrieved.
+                type: int
         
-        """Gets the first open job for the current experiment and participant,
-        i.e. the first job with a PENDING or STARTED status. The returned job
-        is now the current job. The state of the job on the server is set to
-        STARTED.
-        
-        Arguments:
-        job_index -- The index of the job to request.
-        
-        Returns:
-        A Job object.
+        returns:
+            type: Job
         """
         
         pass
 
     def send_current_job_results(self, job_results):
         
-        """Sends results for the current job. This also changed the current job
-        status to FINISHED. There is now no current job anymore.
+        """
+        desc:
+            Sends results for the current job. This changes the current job
+            status to FINISHED. There is now no current job anymore.
         
-        Arguments:
-        jon_results -- a dict where keys are experimental variables, and values
-        are values.
+        arguments:
+            job_results:
+                description:
+                    A `dict` where keys are experimental variables, and values
+                    are values.
+                type: dict
+                
         """
         
         pass
     
     def get_current_job_index(self):
         
-        """Returns the index of the current job in the job table. This reflects
-        the order of the job table and is therefore different from the job is
-        as provided by the current_job property.
+        """
+        returns:
+            The index of the current job in the job table. (This reflects the
+            order of the job table and is therefore different from the job id
+            as provided by the `current_job` property.)
         """
         
         pass
     
     def get_jobs(self, from_index, to_index):
         
-        """Get all jobs between from_index and to_index, where to_index is not
-        included (i.e. Python-slice style). The first job has index 1.
+        """
+        desc:
+            Gets all jobs between `from_index` and `to_index`, where `to_index`
+            is not included (i.e. Python-slice style). The first job has index
+            1. This does not change the current job.
+            
+        arguments:
+            from_index:
+                type: int
+            to_index:
+                type: int
         
-        Returns:
-        A list of Job objects.
+        returns:
+            desc: A `list` of `Job` objects.
+            type: list
         """
         
         pass
-    
+
     def insert_jobs(self, index, jobs):
         
-        """Inserts a list of jobs at the specified index, such that the first
-        job in the list has the specified index. There is now no current job
-        anymore.
+        """
+        desc:
+            Inserts a list of jobs at the specified index, such that the first
+            job in the list has the specified index. The first job has index 1.
+            There is now no current job anymore.
         
-        Arguments:
-        index -- The job index to insert after.
-        jobs -- A list of dict objects, where the variables and values are
-                keys and values of the dict.
+        arguments:
+            index:
+                type: int
+            jobs:
+                desc:
+                    A `list` of `dict` (not `Job`) objects, where the variables
+                    and values are keys and values of the dict.
+                type: list
         """
         
         pass
     
     def delete_jobs(self, from_index, to_index):
         
-        """Deletes all jobs between from_index and to_index, where to_index is
-        not included (i.e. Python-slice style). There is now no current job
-        anymore.
+        """
+        desc:
+            Deletes all jobs between `from_index` and `to_index`, where
+            `to_index` is not included (i.e. Python-slice style). There is now
+            no current job anymore.
+            
+        arguments:
+            from_index:
+                type: int
+            to_index:
+                type: int
         """
         
         pass
     
     def set_job_states(self, from_index, to_index, state):
         
-        """Sets the states of all jobs between from_index and to_index, where
-        to_index is not included (i.e. Python-slice style). There is now no
-        current job anymore.
+        """
+        desc: |
+            Sets the states of all jobs between `from_index` and `to_index`,
+            where `to_index` is not included (i.e. Python-slice style). The
+            first job has index 1. There is now no current job anymore.
         
-        If a job already had results and is set to open. Then the results are
-        not reset. Rather, the job will get a second set of results.
+            If a job already had results and is set to open. Then the results
+            are not reset. Rather, the job will get a second set of results.
+        
+        arguments:
+            from_index:
+                type: int
+            to_index:
+                type: int
+            state:
+                desc: "`Job.PENDING`, `Job.STARTED`, or `Job.FINISHED`."
+                type: int
         """
         
         pass
 
     def __reduce__(self):
         
-        """Avoid an error during unpickling."""
+        """Avoids an error during unpickling."""
         
         return (object, ())

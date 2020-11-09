@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.6a1
+OpenSesame: 3.3.5
 Platform: posix
 Title: Attentional capture
 ---
@@ -43,11 +43,13 @@ set canvas_backend psycho
 set bidi no
 set background black
 
-define OMMRequestCurrentJob OMMRequestCurrentJob
+define OMMRequestJob OMMRequestJob
 	set test_loop test_loop
 	set description "Plugin to request current job for Open Monkey Mind"
 	set block_size 4
 	set block_select yes
+	set _run ""
+	set _prepare ""
 
 define inline_script constants
 	set description "Executes Python code"
@@ -81,16 +83,18 @@ define sequence experiment
 	run constants always
 	run functions always
 	run test_loop always
-	run OMMRequestCurrentJob always
+	run OMMRequestJob always
 	run trial_sequence always
 	run repeat_practice_if_necessary always
 	run practice_done never
 	run practice_repeat never
 
 define sketchpad fixdot
-	set duration 495
+	set duration 995
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="[omm_job_index] of [omm_job_count]" x=0 y=-224 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="[python]" x=0 y=-128 z_index=0
 
 define inline_script functions
 	set description "Executes Python code"
@@ -255,7 +259,13 @@ define loop test_loop
 	set break_if_on_first yes
 	set break_if never
 	setcycle 0 distractor present
+	setcycle 0 _run "print('run1')"
+	setcycle 0 _prepare "print('prepare1')"
+	setcycle 0 python "[='python1']"
 	setcycle 1 distractor absent
+	setcycle 1 _run "print('run2')"
+	setcycle 1 _prepare "print('prepare2')"
+	setcycle 1 python "[='python2']"
 	run dummy_sequence
 
 define inline_script trial_script
@@ -264,7 +274,6 @@ define inline_script trial_script
 	premask_canvas.show()
 	clock.sleep(495)
 	target_canvas.show()
-	print('Index in block: {}'.format(var.omm_job_index_in_block))
 	__end__
 	___prepare__
 	import random
