@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.5
+OpenSesame: 3.3.6a1
 Platform: posix
 Title: Attentional capture
 ---
@@ -42,6 +42,13 @@ set clock_backend psycho
 set canvas_backend psycho
 set bidi no
 set background black
+
+define OMMConditioner OMMConditioner
+	set sound "do nothing"
+	set serial_port COM4
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
 
 define OMMRequestJob OMMRequestJob
 	set test_loop test_loop
@@ -336,5 +343,6 @@ define sequence trial_sequence
 	run keyboard_response always
 	run green_fixdot "[correct] = 1"
 	run red_fixdot "[correct] = 0"
+	run OMMConditioner always
 	run logger always
 

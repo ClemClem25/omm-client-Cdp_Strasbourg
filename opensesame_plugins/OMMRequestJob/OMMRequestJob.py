@@ -26,6 +26,7 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
         self.var.block_select = 'no'
         self.var.block_size = 10
         InlineScript.reset(self)
+        BaseOMMPlugin.reset(self)
         
     def run(self):
         

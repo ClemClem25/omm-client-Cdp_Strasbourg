@@ -23,7 +23,7 @@ Copyright 2020 le Centre National de la Recherche (CNRS)
 
 The entry-point experiment (`osexp\omm-entry-point.osexp`) starts the connection with the OMM server. This assumes that an OMM server is running, either locally (on your own computer) or somewhere else.
 
-The entry-point experiment first asks for a participant identifier. The `OMMAnnounce` item then sends this identifier (as indicated in the Participant field) to the OMM Server, which returns an experiment file that is subsequently started.
+The entry-point experiment first waits until a participant identifier is detected with the `OMMDetectParticipant` item. This either waits for a key press (Dummy mode) or until an RFID chip is detected as used in Rousset (RFID mode). The `OMMAnnounce` item then sends this identifier to the OMM Server, which returns an experiment file that is subsequently started.
 
 The server is specified by the Server and Port (default=3000) options. The API (currently 1) indicates the version of the communication protocol.
 
@@ -54,6 +54,11 @@ The following variables are set automatically:
 ### Sending job results to the OMM server
 
 You can use a regular `logger` item to send job results (i.e. experimental variables) to the OMM server. (This works because the entry-point experiment installs a special log backend.) In addition to being sent to the server, the job results are also appended in `json` format to the log file that you have indicated when starting the entry-point experiment.
+
+
+### Seed dispenser
+
+The `OMMConditioner` item allows for dispensing seeds through the custom seed dispenser as used in Rousset. 
 
 
 ## The `omm` Python object
