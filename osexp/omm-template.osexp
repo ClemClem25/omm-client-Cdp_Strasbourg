@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.0a70
+OpenSesame: 3.3.6a1
 Platform: posix
 Title: Attentional capture
 ---
@@ -43,13 +43,6 @@ set canvas_backend psycho
 set bidi no
 set background gray
 
-define OMMRequestCurrentJob OMMRequestCurrentJob
-	set test_loop test_loop
-	set description "Plugin to request current job for Open Monkey Mind"
-
-define OMMSendCurrentJobResults OMMSendCurrentJobResults
-	set description "Plugin to send current job results for Open Monkey Mind"
-
 define sequence empty_sequence
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
@@ -58,7 +51,7 @@ define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
 	run test_loop always
-	run OMMRequestCurrentJob always
+	run request_job always
 	run trial_sequence always
 	run OMMSendCurrentJobResults always
 
@@ -66,11 +59,29 @@ define sketchpad fixdot
 	set duration keypress
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Condition: [condition]<br /><br /><br />Press any key" x=0.0 y=0.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Condition: [condition]<br /><br /><br />Press any key" x=0 y=0 z_index=0
 
 define logger logger
 	set description "Logs experimental data"
 	set auto_log yes
+
+define OMMRequestJob request_job
+	set test_loop test_loop
+	set omm_server "127.0.0.1"
+	set omm_port 3000
+	set omm_api 1
+	set description "Plugin to request current job for Open Monkey Mind"
+	set block_size 10
+	set block_select no
+	set _run ""
+	set _prepare ""
+
+define OMMConditioner reward
+	set sound "do nothing"
+	set serial_port COM4
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner Dummy
 
 define loop test_loop
 	set source_file ""
@@ -91,4 +102,5 @@ define sequence trial_sequence
 	set description "Runs a number of items in sequence"
 	run fixdot always
 	run logger always
+	run reward always
 
