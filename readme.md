@@ -4,6 +4,14 @@ Sebastiaan Mathôt and Daniel Schreij
 
 Copyright 2020 le Centre National de la Recherche (CNRS)
 
+## Jump to
+
+- [Requirements](#requirements)
+- [License](#license)
+- [Connecting to the OMM Server](#connecting-to-the-omm-server)
+- [Implementing an experiment for OMM](#implementing-an-experiment-for-omm)
+- [The `omm` Python object](#the-omm-python-object)
+
 
 ## Requirements
 
