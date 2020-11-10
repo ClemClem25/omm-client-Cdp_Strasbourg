@@ -5,7 +5,6 @@ from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 from libopensesame import widgets
 from libopensesame.item import Item
-import detectors
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
 SLEEP_TIME = .05
