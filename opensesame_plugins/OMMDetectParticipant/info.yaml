@@ -6,8 +6,9 @@ controls:
     name: combobox_detector
     type: combobox
     options:
-    - Dummy
-    - RFID
+    - form
+    - keypress
+    - rfid
     var: detector
 -
     label: Serial port

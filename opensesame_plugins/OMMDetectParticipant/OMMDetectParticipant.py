@@ -3,6 +3,7 @@
 import time
 from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
+from libopensesame import widgets
 from libopensesame.item import Item
 import detectors
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
@@ -15,17 +16,43 @@ class OMMDetectParticipant(Item):
     
     def reset(self):
         
-        self.var.detector = 'Dummy'
+        self.var.detector = 'form'
         self.var.serial_port = 'COM3'
         self.var.participant_variable = 'participant'
         
-    def _prepare_dummy(self):
+    def _prepare_form(self):
+        
+        self._form = widgets.form(
+            self.experiment,
+            cols=(1),
+            rows=(1,5),
+            item=self,
+            clicks=self.var.form_clicks==u'yes'
+        )
+        label = widgets.label(
+            self._form,
+            text='Enter OMM participant identifier'
+        )
+        self._text_input = widgets.text_input(
+            self._form,
+            return_accepts=True,
+            var=self.var.participant_variable
+        )
+        self._form.set_widget(label, (0, 0))
+        self._form.set_widget(self._text_input, (0, 1))
+        self.run = self._run_form
+        
+    def _run_form(self):
+        
+        self._form._exec(focus_widget=self._text_input)
+    
+    def _prepare_keypress(self):
         
         from openexp.keyboard import Keyboard
         self._keyboard = Keyboard(self.experiment)
-        self.run = self._run_dummy
+        self.run = self._run_keypress
     
-    def _run_dummy(self):
+    def _run_keypress(self):
         
         key, timestamp = self._keyboard.get_key()
         oslogger.info('identifier: {}'.format(key))
@@ -49,12 +76,14 @@ class OMMDetectParticipant(Item):
     
     def prepare(self):
         
-        if self.var.detector == 'RFID':
+        if self.var.detector == 'rfid':
             self._prepare_rfid()
-        elif self.var.detector == 'Dummy':
-            self._prepare_dummy()
+        elif self.var.detector == 'keypress':
+            self._prepare_keypress()
+        elif self.var.detector == 'form':
+            self._prepare_form()
         else:
-            raise ValueError("detector should be 'dummy' or 'rfid'")
+            raise ValueError("detector should be 'Dummy', 'Form' or 'RFID'")
 
 
 class qtOMMDetectParticipant(OMMDetectParticipant, QtAutoPlugin):
