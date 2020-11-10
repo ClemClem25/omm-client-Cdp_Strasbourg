@@ -3,21 +3,18 @@ API: 2.1
 OpenSesame: 3.3.6a1
 Platform: posix
 ---
-set width 1024
+set width {omm_width}
 set uniform_coordinates yes
 set title "OMM Entry Point"
 set subject_parity even
 set subject_nr 0
-set start experiment
+set start omm_loop
 set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
-set sampler_backend psycho
 set round_decimals 2
-set mouse_backend psycho
-set keyboard_backend psycho
-set height 768
+set height {omm_height}
 set fullscreen no
 set form_clicks no
 set foreground white
@@ -26,19 +23,16 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/home/sebastiaan/git/omm-client/osexp"
 set disable_garbage_collection yes
-set description "The main experiment item"
+set description "Entry point for connecting to an OMM server"
 set coordinates uniform
 set compensation 0
-set color_backend psycho
-set clock_backend psycho
-set canvas_backend psycho
+set canvas_backend {canvas_backend}
 set background black
 
 define OMMAnnounce announce
-	set omm_server "127.0.0.1"
-	set omm_port 3000
+	set omm_server "{omm_server}"
+	set omm_port "{omm_port}"
 	set omm_participant "[participant]"
 	set omm_api 1
 	set description "Announce-participant plugin for Open Monkey Mind"
@@ -50,12 +44,7 @@ define repeat_cycle be_infinite
 define OMMDetectParticipant detect
 	set serial_port COM3
 	set participant_variable participant
-	set detector Dummy
-
-define sequence experiment
-	set flush_keyboard yes
-	set description "Runs a number of items in sequence"
-	run omm_loop always
+	set detector "{omm_detector}"
 
 define loop omm_loop
 	set source_file ""
@@ -82,4 +71,3 @@ define sketchpad wait
 	set duration 0
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="waiting for participant" x=0 y=0 z_index=0
-

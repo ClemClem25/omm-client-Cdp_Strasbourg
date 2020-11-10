@@ -1,0 +1,14 @@
+label: OpenMonkeyMind
+icon: network-workgroup
+menu:
+  index: -1
+  separator_before: true
+  submenu: Tools
+settings:
+  omm_server: 127.0.0.1
+  omm_port: 3000
+  omm_detector: form
+  omm_backend: psycho
+  omm_width: 1024
+  omm_height: 768
+  omm_fullscreen: false
