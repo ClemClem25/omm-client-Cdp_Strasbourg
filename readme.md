@@ -1,12 +1,15 @@
-# OpenMonkeyMind client software
+# OpenMonkeyMind
+
+*Plugins and extension for OpenSesame*
 
 Sebastiaan Mathôt and Daniel Schreij
 
-Copyright 2020 le Centre National de la Recherche (CNRS)
+© 2020, le Centre National de la Recherche (CNRS)
 
 ## Jump to
 
 - [Requirements](#requirements)
+- [Installation](#installation)
 - [License](#license)
 - [Connecting to the OMM Server](#connecting-to-the-omm-server)
 - [Implementing an experiment for OMM](#implementing-an-experiment-for-omm)
@@ -15,7 +18,7 @@ Copyright 2020 le Centre National de la Recherche (CNRS)
 
 ## Requirements
 
-- OpenSesame 3.3
+- [OpenSesame 3.3](https://osdoc.cogsci.nl/)
 - [OpenMonkeyMind server software](https://github.com/open-cogsci/omm-server)
 
 
