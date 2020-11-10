@@ -19,18 +19,46 @@ Copyright 2020 le Centre National de la Recherche (CNRS)
 - [OpenMonkeyMind server software](https://github.com/open-cogsci/omm-server)
 
 
+## Installation
+
+You can install OpenMonkeyMind through PyPi/ pip:
+
+```
+pip install openmonkeymind
+```
+
+Or through Anaconda (if you're running an Anaconda Python environment):
+
+```
+conda install openmonkeymind -c cogsci -y
+```
+
+To run these commands in the OpenSesame console, you need to prefix them with `!`:
+
+```
+!conda install openmonkeymind -c cogsci -y
+```
+
+
 ## Connecting to the OMM server
 
-The entry-point experiment (`osexp\omm-entry-point.osexp`) starts the connection with the OMM server. This assumes that an OMM server is running, either locally (on your own computer) or somewhere else.
+The easiest way to connect to an OMM server is through the OpenMonkeyMind extension (Menu → Tools → OpenMonkeyMind). This opens a basic configuration panel that specifies a few things:
 
-The entry-point experiment first waits until a participant identifier is detected with the `OMMDetectParticipant` item. This either waits for a key press (Dummy mode) or until an RFID chip is detected as used in Rousset (RFID mode). The `OMMAnnounce` item then sends this identifier to the OMM Server, which returns an experiment file that is subsequently started.
+- The __address__ and __port__ of the OMM server. (An OMM server mus be running, either locally on your own computer or somewhere else.)
+- The __identification method__ that is used to announce participants.
+  - The *keypress* method collects a single key press, which means that participant identifiers are limited to single characters.
+  - The *form* method collects a multicharacter identifier through a text-input form.
+  - The *rfid* method reads an identifier from an RFID chip (specific to Rousset).
+- The __backend__, __display resolution__, and a __fullscreen__ option. These options will apply to all experiments running in the session.
+- The green play button starts a session.
 
-The server is specified by the Server and Port (default=3000) options. The API (currently 1) indicates the version of the communication protocol.
+You can also open a template to create your own entry-point experiment for connecting to an OMM server. By default, the entry-point experiment first waits until a participant identifier is detected with the `OMMDetectParticipant` item. The `OMMAnnounce` item then sends this identifier to the OMM Server, which returns an experiment file that is subsequently started.
 
 
 ## Implementing an experiment for OMM
 
-The experiment `osexp\omm-template.osexp` contains the basic structure of an OMM experiment. Most of the action happens in *trial_sequence*. This can be an arbitrary trial sequence, just like you're used to in regular OpenSesame experiments.
+The easiest way to build a new OMM-compatible experiment is by first opening the OpenMonkeyMind extension (Menu → Tools → OpenMonkeyMind) and from there opening the template for a new experiment. In this template, most of the action happens in *trial_sequence*. This can be an arbitrary trial sequence, just like you're used to in regular OpenSesame experiments.
+
 
 ### Requesting a job from the OMM server
 
@@ -58,7 +86,7 @@ You can use a regular `logger` item to send job results (i.e. experimental varia
 
 ### Seed dispenser
 
-The `OMMConditioner` item allows for dispensing seeds through the custom seed dispenser as used in Rousset. 
+The `OMMConditioner` item allows for dispensing seed rewards (specific to Rousset).
 
 
 ## The `omm` Python object
