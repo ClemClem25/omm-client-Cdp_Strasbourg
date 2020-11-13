@@ -154,7 +154,7 @@ class BaseOpenMonkeyMind(object):
         desc: `True` when connected to a server, `False` otherwise.
         """
         
-        return self._paricipant is not None
+        return self._participant is not None
         
     def announce(self, participant):
         
