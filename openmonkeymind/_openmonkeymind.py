@@ -5,6 +5,7 @@ from libopensesame.oslogging import oslogger
 import os
 import time
 import tempfile
+import hashlib
 import requests
 import json
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
@@ -60,7 +61,6 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._study = None
         self._job_id = None
         self._job_count = None
-        self._osexp_cache = {}
         self.verbose = False
         if not oslogger.started:
             oslogger.start('omm')
@@ -110,25 +110,29 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             if not f['type'] == 'experiment':
                 continue
             path = f['path']
+            updated_at = f['updated_at']
+            size = f['size']
             break
         else:
             raise InvalidJSON(safe_decode(json))
-        if (
-            path not in self._osexp_cache or
-            self._osexp_cache[path][0] < time.strptime(
-                json['updated_at'],
-                '%Y-%m-%d %H:%M:%S'
-            )
-        ):
+        cache_path = os.path.join(
+            tempfile.gettempdir(),
+            hashlib.md5(safe_encode(path + updated_at)).hexdigest() + '.osexp'
+        )
+        # If a cached file that matches in name and size exists, we re-use it. 
+        # The file name also includes the updated_at fields, and thus 
+        # re-uploading a new experiment with the same size will still refresh 
+        # the cache.
+        if os.path.exists(cache_path) and os.path.getsize(cache_path) == size:
+            oslogger.info('using cached {}'.format(cache_path))
+        else:
             response = requests.get(self._osexp_url + path)
             if not response.ok:
                 raise FailedToDownloadExperiment()
-            with tempfile.NamedTemporaryFile(delete=False) as fd:
+            with open(cache_path, 'wb') as fd:
                 fd.write(response.content)
-            self._osexp_cache[path] = time.gmtime(), fd.name
-            oslogger.info('caching {} to {}'.format(path, fd.name))
-        oslogger.info('returning cached osexp {}'.format(path))
-        self._experiment = experiment(string=self._osexp_cache[path][1])
+            oslogger.info('caching {} to {}'.format(path, cache_path))
+        self._experiment = experiment(string=cache_path)
         return self._experiment
     
     def announce(self, participant):
