@@ -36,6 +36,9 @@ define OMMAnnounce announce
 	set omm_participant "[participant]"
 	set omm_api 1
 	set description "Announce-participant plugin for Open Monkey Mind"
+	__omm_yaml_data__
+{omm_yaml_data}
+	__end__
 
 define repeat_cycle be_infinite
 	set description "Optionally repeat a cycle from a loop"

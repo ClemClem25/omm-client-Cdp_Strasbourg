@@ -3,6 +3,8 @@
 from libopensesame.py3compat import *
 import os
 import tempfile
+import textwrap
+import yaml
 from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
 
@@ -21,15 +23,28 @@ class OpenMonkeyMind(BaseExtension):
 
     def settings_widget(self):
 
-        w = super().settings_widget()
-        w.ui.button_start.clicked.connect(self._connect)
-        w.ui.button_template_entry_point.clicked.connect(
+        self._w = super().settings_widget()
+        if isinstance(cfg.omm_yaml_data, str):
+            self._w.ui.omm_yaml_data.setPlainText(cfg.omm_yaml_data)
+        self._w.ui.omm_yaml_data.textChanged.connect(self._update_yaml_data)
+        self._w.ui.button_start.clicked.connect(self._connect)
+        self._w.ui.button_template_entry_point.clicked.connect(
             self._template_entry_point
         )
-        w.ui.button_template_experiment.clicked.connect(
+        self._w.ui.button_template_experiment.clicked.connect(
             self._template_experiment
         )
-        return w
+        return self._w
+    
+    def _update_yaml_data(self):
+        
+        try:
+            yaml_data = yaml.safe_load(self._w.ui.omm_yaml_data.toPlainText())
+        except:
+            self._w.ui.button_start.setEnabled(False)
+            return
+        self._w.ui.button_start.setEnabled(True)
+        cfg.omm_yaml_data = yaml.safe_dump(yaml_data)
 
     def _compile_entry_point(self):
         
@@ -41,6 +56,7 @@ class OpenMonkeyMind(BaseExtension):
             omm_height=cfg.omm_height,
             omm_width=cfg.omm_width,
             omm_detector=cfg.omm_detector,
+            omm_yaml_data=textwrap.indent(cfg.omm_yaml_data, prefix='\t'),
             canvas_backend=cfg.omm_backend
         )
         fd, path = tempfile.mkstemp(suffix='-omm-entry-point.osexp')

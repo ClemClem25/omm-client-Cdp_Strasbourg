@@ -25,3 +25,9 @@ controls:
     min_val: 1
     max_val: 10000
     var: omm_api
+-
+    label: YAML data
+    name: yaml_data
+    type: editor
+    syntax: false
+    var: omm_yaml_data

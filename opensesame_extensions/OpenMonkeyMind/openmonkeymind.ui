@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>499</height>
+    <height>528</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,7 +115,8 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset theme="dialog-ok"/>
+            <iconset theme="dialog-ok">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -142,7 +143,8 @@
           <string>form</string>
          </property>
          <property name="icon">
-          <iconset theme="input-keyboard"/>
+          <iconset theme="input-keyboard">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
         <item>
@@ -150,7 +152,8 @@
           <string>keypress</string>
          </property>
          <property name="icon">
-          <iconset theme="input-keyboard"/>
+          <iconset theme="input-keyboard">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
         <item>
@@ -158,7 +161,8 @@
           <string>rfid</string>
          </property>
          <property name="icon">
-          <iconset theme="network-receive"/>
+          <iconset theme="network-receive">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
        </widget>
@@ -177,7 +181,8 @@
           <string>psycho</string>
          </property>
          <property name="icon">
-          <iconset theme="os-psychopy"/>
+          <iconset theme="os-psychopy">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
         <item>
@@ -185,7 +190,8 @@
           <string>psycho_legacy</string>
          </property>
          <property name="icon">
-          <iconset theme="os-psychopy"/>
+          <iconset theme="os-psychopy">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
         <item>
@@ -193,7 +199,8 @@
           <string>legacy</string>
          </property>
          <property name="icon">
-          <iconset theme="os-pygame"/>
+          <iconset theme="os-pygame">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
         <item>
@@ -201,7 +208,8 @@
           <string>xpyriment</string>
          </property>
          <property name="icon">
-          <iconset theme="os-expyriment"/>
+          <iconset theme="os-expyriment">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </item>
        </widget>
@@ -274,7 +282,17 @@
         </layout>
        </widget>
       </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;YAML data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="1">
+       <widget class="QPlainTextEdit" name="omm_yaml_data"/>
+      </item>
+      <item row="5" column="1">
        <widget class="QPushButton" name="button_start">
         <property name="text">
          <string/>
