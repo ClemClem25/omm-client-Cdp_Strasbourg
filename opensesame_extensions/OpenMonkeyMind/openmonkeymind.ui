@@ -104,22 +104,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="button_server_status">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QLabel" name="label_server_status">
            <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset theme="dialog-ok">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
+            <string>Ok</string>
            </property>
           </widget>
          </item>

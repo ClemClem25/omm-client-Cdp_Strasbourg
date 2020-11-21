@@ -147,6 +147,16 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._study = json['id']
         self._job_count = json['jobs_count']
         return self._get_osexp(json)
+    
+    @property
+    def available(self):
+        
+        oslogger.info('check server at {}'.format('healthz'))
+        try:
+            response = requests.get(self._base_url + 'healthz')
+        except requests.exceptions.ConnectionError:
+            return False
+        return response.ok
         
     def _request_current_job(self):
         

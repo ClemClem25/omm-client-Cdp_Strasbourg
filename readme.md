@@ -121,6 +121,22 @@ An experiment object.
 
 </div>
 
+<div class="PropertyDoc YAMLDoc" id="omm-available" markdown="1">
+
+## property __omm.available__
+
+`True` when a server appears to be available, `False` otherwise.
+
+</div>
+
+<div class="PropertyDoc YAMLDoc" id="omm-connected" markdown="1">
+
+## property __omm.connected__
+
+`True` when connected to a server, `False` otherwise.
+
+</div>
+
 <div class="PropertyDoc YAMLDoc" id="omm-current_job" markdown="1">
 
 ## property __omm.current_job__
@@ -276,6 +292,7 @@ __Arguments:__
 </div>
 
 </div>
+
 
 
 ## License

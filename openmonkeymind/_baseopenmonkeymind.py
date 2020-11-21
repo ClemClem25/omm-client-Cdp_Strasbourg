@@ -151,10 +151,20 @@ class BaseOpenMonkeyMind(object):
         
         """
         name: connected
-        desc: `True` when connected to a server, `False` otherwise.
+        desc: "`True` when connected to a server, `False` otherwise."
         """
         
         return self._participant is not None
+    
+    @property
+    def available(self):
+        
+        """
+        name: available
+        desc: "`True` when a server appears to be available, `False` otherwise."
+        """
+        
+        raise NotImplementedError()
         
     def announce(self, participant):
         

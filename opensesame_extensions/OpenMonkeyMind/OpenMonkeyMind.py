@@ -7,6 +7,7 @@ import textwrap
 import yaml
 from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
+from openmonkeymind import OpenMonkeyMind as OMM
 
 
 class OpenMonkeyMind(BaseExtension):
@@ -26,7 +27,7 @@ class OpenMonkeyMind(BaseExtension):
         self._w = super().settings_widget()
         if isinstance(cfg.omm_yaml_data, str):
             self._w.ui.omm_yaml_data.setPlainText(cfg.omm_yaml_data)
-        self._w.ui.omm_yaml_data.textChanged.connect(self._update_yaml_data)
+        self._w.ui.omm_yaml_data.textChanged.connect(self._validate)
         self._w.ui.button_start.clicked.connect(self._connect)
         self._w.ui.button_template_entry_point.clicked.connect(
             self._template_entry_point
@@ -34,17 +35,32 @@ class OpenMonkeyMind(BaseExtension):
         self._w.ui.button_template_experiment.clicked.connect(
             self._template_experiment
         )
+        self._validate()
         return self._w
     
-    def _update_yaml_data(self):
+    def event_setting_changed(self, setting, value):
         
+        if setting in ('omm_server', 'omm_port'):
+            self._validate()
+
+    def _validate(self):
+        
+        self._w.ui.button_start.setEnabled(True)
+        if OMM(server=cfg.omm_server, port=cfg.omm_port).available:
+            self._w.ui.label_server_status.setText('✓')
+            self._w.ui.label_server_status.setStyleSheet('color:green;')
+        else:
+            self._w.ui.label_server_status.setText('✕')
+            self._w.ui.label_server_status.setStyleSheet('color:red;')
+            self._w.ui.button_start.setEnabled(False)
         try:
             yaml_data = yaml.safe_load(self._w.ui.omm_yaml_data.toPlainText())
         except:
+            self._w.ui.omm_yaml_data.setStyleSheet('color:red;')
             self._w.ui.button_start.setEnabled(False)
-            return
-        self._w.ui.button_start.setEnabled(True)
-        cfg.omm_yaml_data = yaml.safe_dump(yaml_data)
+        else:
+            self._w.ui.omm_yaml_data.setStyleSheet('')
+            cfg.omm_yaml_data = yaml.safe_dump(yaml_data)
 
     def _compile_entry_point(self):
         
