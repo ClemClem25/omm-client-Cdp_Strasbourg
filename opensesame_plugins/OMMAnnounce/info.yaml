@@ -26,6 +26,11 @@ controls:
     max_val: 10000
     var: omm_api
 -
+    label: Local log file
+    name: line_edit_local_logfile
+    type: line_edit
+    var: omm_local_logfile
+-
     label: Fallback experiment
     info: In case of connection errors etc.
     name: line_edit_fallback_experiment

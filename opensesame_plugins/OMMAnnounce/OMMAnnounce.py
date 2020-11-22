@@ -20,7 +20,12 @@ class OMMAnnounce(BaseOMMPlugin, Item):
     def reset(self):
 
         self.var.omm_participant = '[participant]'
+        self.var.omm_server = '127.0.0.1'
+        self.var.omm_port = 3000
+        self.var.omm_api = 1
+        self.var.omm_local_logfile = ''
         self.var.omm_fallback_experiment = ''
+        self.var.omm_yaml_data = ''
         BaseOMMPlugin.reset(self)
         
     def run(self):
@@ -40,7 +45,7 @@ class OMMAnnounce(BaseOMMPlugin, Item):
         exp.init_display = lambda: None
         exp.end = lambda: None
         exp.window = self.experiment.window
-        exp.logfile = self.experiment.logfile
+        exp.logfile = self.var.omm_local_logfile
         exp.python_workspace['win'] = self.experiment.window
         exp.python_workspace['omm'] = self._openmonkeymind
         # A few back-end-specific properties need to be copied to the

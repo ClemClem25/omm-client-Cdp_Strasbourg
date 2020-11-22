@@ -5,6 +5,7 @@ import os
 import tempfile
 import textwrap
 import yaml
+from qtpy.QtWidgets import QFileDialog
 from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
 from libqtopensesame.misc.translate import translation_context
@@ -40,6 +41,9 @@ class OpenMonkeyMind(BaseExtension):
         self._w.ui.button_fallback_experiment_browse.clicked.connect(
             self._select_fallback_experiment
         )
+        self._w.ui.button_local_logfile_browse.clicked.connect(
+            self._select_local_logfile
+        )
         self._validate()
         return self._w
     
@@ -49,8 +53,6 @@ class OpenMonkeyMind(BaseExtension):
             self._validate()
             
     def _select_fallback_experiment(self):
-        
-        from qtpy.QtWidgets import QFileDialog
         
         path = QFileDialog.getOpenFileName(
             self.main_window,
@@ -62,6 +64,19 @@ class OpenMonkeyMind(BaseExtension):
             return
         cfg.omm_fallback_experiment = path
         self._w.ui.cfg_omm_fallback_experiment.setText(path)
+        
+    def _select_local_logfile(self):
+        
+        path = QFileDialog.getSaveFileName(
+            self.main_window,
+            _('Select local logfile'),
+        )
+        if isinstance(path, tuple):
+            path = path[0]
+        if not path:
+            return
+        cfg.omm_local_logfile = path
+        self._w.ui.cfg_omm_local_logfile.setText(path)
 
     def _validate(self):
         
@@ -93,6 +108,7 @@ class OpenMonkeyMind(BaseExtension):
             omm_width=cfg.omm_width,
             omm_detector=cfg.omm_detector,
             omm_yaml_data=textwrap.indent(cfg.omm_yaml_data, prefix='\t'),
+            omm_local_logfile=cfg.omm_local_logfile,
             omm_fallback_experiment=cfg.omm_fallback_experiment,
             canvas_backend=cfg.omm_backend
         )

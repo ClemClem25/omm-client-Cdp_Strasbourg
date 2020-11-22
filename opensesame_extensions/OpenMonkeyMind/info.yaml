@@ -13,4 +13,5 @@ settings:
   omm_height: 768
   omm_fullscreen: false
   omm_fallback_experiment: ""
+  omm_local_logfile: ""
   omm_yaml_data: ""

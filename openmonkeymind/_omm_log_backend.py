@@ -35,6 +35,7 @@ class LogBackend(Csv):
         self.experiment.var.logfile = self._path
         if self._path not in self.experiment.data_files:
             self.experiment.data_files.append(self._path)
+        oslogger.info('appending to {}'.format(self._path))
         self._log = safe_open(self._path, u'a')
 
     def write_vars(self, var_list=None):
