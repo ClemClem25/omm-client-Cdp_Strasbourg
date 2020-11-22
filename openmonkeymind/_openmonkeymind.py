@@ -11,7 +11,6 @@ import json
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
 from openmonkeymind._exceptions import (
     NoJobsForParticipant,
-    UnknownParticipant,
     FailedToSendJobResults,
     InvalidJSON,
     FailedToSetJobStates,

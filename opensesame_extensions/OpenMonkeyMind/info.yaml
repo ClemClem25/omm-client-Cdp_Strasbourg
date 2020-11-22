@@ -12,4 +12,5 @@ settings:
   omm_width: 1024
   omm_height: 768
   omm_fullscreen: false
+  omm_fallback_experiment: ""
   omm_yaml_data: ""

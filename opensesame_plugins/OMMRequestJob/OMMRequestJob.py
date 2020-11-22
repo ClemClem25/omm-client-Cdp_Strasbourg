@@ -35,7 +35,7 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
     def prepare(self):
 
         BaseOMMPlugin.prepare(self)
-        if self._openmonkeymind.current_participant is None:
+        if not self._openmonkeymind.connected:
             oslogger.info('running in test mode')
             self._prepare_test()
             return

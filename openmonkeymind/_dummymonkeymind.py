@@ -3,7 +3,7 @@
 from libopensesame.py3compat import *
 import os
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind
-from openmonkeymind._exceptions import NoJobsForParticipant, UnknownParticipant
+from openmonkeymind._exceptions import NoJobsForParticipant
 from libopensesame.experiment import experiment
 
 
@@ -39,7 +39,7 @@ class DummyMonkeyMind(BaseOpenMonkeyMind):
         
         self._participant = participant
         if self._participant not in self._jobs:
-            raise UnknownParticipant(participant)
+            raise NoJobsForParticipant(participant)
         if not self._jobs[self._participant][0]['jobs']:
             self._jobs[self._participant].pop(0)
         if not self._jobs[self._participant]:

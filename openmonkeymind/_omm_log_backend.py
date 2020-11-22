@@ -46,7 +46,8 @@ class LogBackend(Csv):
             for var in var_list
         }
         self.write(json)
-        self._omm.send_current_job_results(json)
+        if self._omm.connected:
+            self._omm.send_current_job_results(json)
 
 
 # Alias for the backend class to find

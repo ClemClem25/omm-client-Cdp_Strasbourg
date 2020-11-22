@@ -34,6 +34,7 @@ define OMMAnnounce announce
 	set omm_server "{omm_server}"
 	set omm_port "{omm_port}"
 	set omm_participant "[participant]"
+	set omm_fallback_experiment "{omm_fallback_experiment}"
 	set omm_api 1
 	set description "Announce-participant plugin for Open Monkey Mind"
 	__omm_yaml_data__

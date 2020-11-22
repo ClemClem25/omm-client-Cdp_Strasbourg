@@ -7,7 +7,9 @@ import textwrap
 import yaml
 from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
+from libqtopensesame.misc.translate import translation_context
 from openmonkeymind import OpenMonkeyMind as OMM
+_ = translation_context(u'OpenMonkeyMind', category=u'extension')
 
 
 class OpenMonkeyMind(BaseExtension):
@@ -35,6 +37,9 @@ class OpenMonkeyMind(BaseExtension):
         self._w.ui.button_template_experiment.clicked.connect(
             self._template_experiment
         )
+        self._w.ui.button_fallback_experiment_browse.clicked.connect(
+            self._select_fallback_experiment
+        )
         self._validate()
         return self._w
     
@@ -42,6 +47,21 @@ class OpenMonkeyMind(BaseExtension):
         
         if setting in ('omm_server', 'omm_port'):
             self._validate()
+            
+    def _select_fallback_experiment(self):
+        
+        from qtpy.QtWidgets import QFileDialog
+        
+        path = QFileDialog.getOpenFileName(
+            self.main_window,
+            _('Open fallback experiment'),
+        )
+        if isinstance(path, tuple):
+            path = path[0]
+        if not path:
+            return
+        cfg.omm_fallback_experiment = path
+        self._w.ui.cfg_omm_fallback_experiment.setText(path)
 
     def _validate(self):
         
@@ -73,6 +93,7 @@ class OpenMonkeyMind(BaseExtension):
             omm_width=cfg.omm_width,
             omm_detector=cfg.omm_detector,
             omm_yaml_data=textwrap.indent(cfg.omm_yaml_data, prefix='\t'),
+            omm_fallback_experiment=cfg.omm_fallback_experiment,
             canvas_backend=cfg.omm_backend
         )
         fd, path = tempfile.mkstemp(suffix='-omm-entry-point.osexp')

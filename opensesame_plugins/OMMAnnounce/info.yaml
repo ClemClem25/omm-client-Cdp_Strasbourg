@@ -26,6 +26,12 @@ controls:
     max_val: 10000
     var: omm_api
 -
+    label: Fallback experiment
+    info: In case of connection errors etc.
+    name: line_edit_fallback_experiment
+    type: line_edit
+    var: omm_fallback_experiment
+-
     label: YAML data
     name: yaml_data
     type: editor
