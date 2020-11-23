@@ -70,12 +70,18 @@ class OMMAnnounce(BaseOMMPlugin, Item):
                     exp.var.set(backend, self.experiment.var.get(backend))
                 else:
                     exp.var.__delattr__(backend)
+        # The YAML data specified in the extension or the OMMAnnounce item
         try:
             yaml_data = yaml.safe_load(self.var.omm_yaml_data)
+            if yaml_data is None:
+                yaml_data = {}
             assert(isinstance(yaml_data, dict))
         except:
             raise ValueError('YAML data is not a valid YAML dict')
         for key, value in yaml_data.items():
+            exp.var.set(key, value)
+        # The metadata associated with the participant
+        for key, value in self._openmonkeymind.participant_metadata.items():
             exp.var.set(key, value)
         exp.run()
         

@@ -103,6 +103,7 @@ class BaseOpenMonkeyMind(object):
         self._job_id = None
         self._study = None
         self._job_count = None
+        self._participant_metadata = {}
     
     @property
     def current_participant(self):
@@ -113,6 +114,16 @@ class BaseOpenMonkeyMind(object):
         """
         
         return self._participant
+    
+    @property
+    def participant_metadata(self):
+        
+        """
+        name: participant_metadata
+        desc: A dict with metadata of the participant.
+        """
+        
+        return self._participant_metadata
     
     @property
     def current_study(self):

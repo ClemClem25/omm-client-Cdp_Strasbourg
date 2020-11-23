@@ -57,6 +57,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._base_url = 'http://{}:{}/api/v{}/'.format(server, port, api)
         self._osexp_url = 'http://{}:{}'.format(server, port)
         self._participant = None
+        self._participant_metadata = {}
         self._study = None
         self._job_id = None
         self._job_count = None
@@ -145,6 +146,13 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._participant = participant
         self._study = json['id']
         self._job_count = json['jobs_count']
+        # The participant metadata is optional, and is None if no metadata has 
+        # been specified.
+        metadata = json['participants'][0]['meta']
+        if metadata is None:
+            self._participant_metadata = {}
+        else:
+            self._participant_metadata = metadata
         return self._get_osexp(json)
     
     @property
