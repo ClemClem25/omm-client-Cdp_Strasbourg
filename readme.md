@@ -47,13 +47,17 @@ To run these commands in the OpenSesame console, you need to prefix them with `!
 
 The easiest way to connect to an OMM server is through the OpenMonkeyMind extension (Menu → Tools → OpenMonkeyMind). This opens a basic configuration panel that specifies a few things:
 
-- The __address__ and __port__ of the OMM server. (An OMM server mus be running, either locally on your own computer or somewhere else.)
+- The __Server address__ and __port__ of the OMM server. An OMM server must be running, either locally on your own computer or somewhere else. If a server is detected, the checkmark next to the port will turn green.
 - The __identification method__ that is used to announce participants.
   - The *keypress* method collects a single key press, which means that participant identifiers are limited to single characters.
   - The *form* method collects a multicharacter identifier through a text-input form.
   - The *rfid* method reads an identifier from an RFID chip (specific to Rousset).
 - The __backend__, __display resolution__, and a __fullscreen__ option. These options will apply to all experiments running in the session.
-- The green play button starts a session.
+- The __local log file__ is a file on the local system. Log data will be appended to this log file as one line of JSON data for every time that a `logger` is called. The `logger` also sends this data to the OMM server.
+- The __fallback experiment__ is an experiment file on the local system that will be executed when the OMM server cannot be reached or when no jobs are lined up for the participant. The fallback experiment will be disconnected, i.e. the `omm.connected` property will be `False`.
+- The __YAML data__ allows you to optionally specify experimental variables in the form of a YAML dictionary.
+
+The green play button starts a session. If the YAML data is invalid or a server is not detected at the specified address and port, the button is disabled.
 
 You can also open a template to create your own entry-point experiment for connecting to an OMM server. By default, the entry-point experiment first waits until a participant identifier is detected with the `OMMDetectParticipant` item. The `OMMAnnounce` item then sends this identifier to the OMM Server, which returns an experiment file that is subsequently started.
 
@@ -229,6 +233,14 @@ __Arguments:__
 ## property __omm.job_count__
 
 The number of jobs in the job table.
+
+</div>
+
+<div class="PropertyDoc YAMLDoc" id="omm-participant_metadata" markdown="1">
+
+## property __omm.participant_metadata__
+
+A dict with metadata of the participant.
 
 </div>
 
