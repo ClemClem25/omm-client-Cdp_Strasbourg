@@ -95,7 +95,10 @@ class OpenMonkeyMind(BaseExtension):
             self._w.ui.button_start.setEnabled(False)
         else:
             self._w.ui.omm_yaml_data.setStyleSheet('')
-            cfg.omm_yaml_data = yaml.safe_dump(yaml_data)
+            cfg.omm_yaml_data = (
+                '' if yaml_data is None
+                else yaml.safe_dump(yaml_data)
+            )
 
     def _compile_entry_point(self):
         
