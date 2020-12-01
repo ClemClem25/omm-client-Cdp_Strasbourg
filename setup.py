@@ -29,6 +29,7 @@ setup(
                 'opensesame_extensions/OpenMonkeyMind/omm-entry-point.osexp',
                 'opensesame_extensions/OpenMonkeyMind/omm-template.osexp',
                 'opensesame_extensions/OpenMonkeyMind/info.yaml',
+                'opensesame_extensions/OpenMonkeyMind/openmonkeymind.ui'
             ]
         ),
         (
