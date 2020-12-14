@@ -24,6 +24,14 @@ Sebastiaan Mathôt and Daniel Schreij
 
 ## Installation
 
+As long as the repository is private, you need to download the `.whl` package through the releases page, and install it by specifying the full path:
+
+```
+pip install /path/to/package.whl --upgrade
+```
+
+When the repository is made public, the package will also be made available through PyPi and Anaconda, per the instructions below.
+
 You can install OpenMonkeyMind through PyPi/ pip:
 
 ```
