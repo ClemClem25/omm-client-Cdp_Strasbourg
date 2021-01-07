@@ -10,15 +10,16 @@ OpenMonkeyMind (OMM) allows OpenSesame experiments to be managed on a central se
 
 ## Credits
 
-Sebastiaan Mathôt (@smathot), University of Groningen, The Netherlands  /
-Daniel Schreij  (@dschreij) /
-Joel Fagot (@joelfagot), CNRS and Aix-Marseille University, France  /
-Nicolas Claidère (@nclaidiere), CNRS and Aix-Marseille University, France  /
-Pascal Belin, Aix Marseille University, France
+© 2020 - 2021:
+
+- Sebastiaan Mathôt (@smathot), University of Groningen, The Netherlands
+- Daniel Schreij  (@dschreij)
+- Joel Fagot (@joelfagot), CNRS and Aix-Marseille University, France
+- Nicolas Claidère (@nclaidiere), CNRS and Aix-Marseille University, France
+- Pascal Belin, Aix Marseille University, France
 
 The development of Open Monkey Mind was supported by ERC Advanced grant COVOPRIM #78824
 
-© 2020, le Centre National de la Recherche (CNRS)
 
 ## Jump to
 
