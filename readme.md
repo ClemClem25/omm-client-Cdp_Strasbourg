@@ -1,8 +1,22 @@
 # OpenMonkeyMind
 
+
 *Plugins and extension for OpenSesame*
 
-Sebastiaan Mathôt and Daniel Schreij
+## About
+
+OpenMonkeyMind (OMM) allows OpenSesame experiments to be managed on a central server ([omm-server](https://github.com/open-cogsci/omm-server)) and deployed to computers running OpenSesame with the [omm-client](https://github.com/open-cogsci/omm-client) software installed. 
+
+
+## Credits
+
+Sebastiaan Mathôt (@smathot), University of Groningen, The Netherlands  /
+Daniel Schreij  (@dschreij) /
+Joel Fagot (@joelfagot), CNRS and Aix-Marseille University, France  /
+Nicolas Claidère (@nclaidiere), CNRS and Aix-Marseille University, France  /
+Pascal Belin, Aix Marseille University, France
+
+The development of Open Monkey Mind was supported by ERC Advanced grant COVOPRIM #78824
 
 © 2020, le Centre National de la Recherche (CNRS)
 
@@ -10,10 +24,10 @@ Sebastiaan Mathôt and Daniel Schreij
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [License](#license)
 - [Connecting to the OMM Server](#connecting-to-the-omm-server)
 - [Implementing an experiment for OMM](#implementing-an-experiment-for-omm)
 - [The `omm` Python object](#the-omm-python-object)
+- [License](#license)
 
 
 ## Requirements
@@ -23,14 +37,6 @@ Sebastiaan Mathôt and Daniel Schreij
 
 
 ## Installation
-
-As long as the repository is private, you need to download the `.whl` package through the releases page, and install it by specifying the full path:
-
-```
-pip install /path/to/package.whl --upgrade
-```
-
-When the repository is made public, the package will also be made available through PyPi and Anaconda, per the instructions below.
 
 You can install OpenMonkeyMind through PyPi/ pip:
 
@@ -314,9 +320,10 @@ __Arguments:__
 </div>
 
 
-
 ## License
 
-TODO
-
 Icons are based on emojis designed by OpenMoji – the open-source emoji and icon project. License: CC BY-SA 4.0
+
+The rest of OpenMonkeyMind is distributed under the terms of the GNU General Public License 3. The full license should be included in the file COPYING, or can be obtained from:
+
+- <http://www.gnu.org/licenses/gpl.txt>
