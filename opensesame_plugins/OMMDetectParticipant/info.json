@@ -1,0 +1,31 @@
+{
+  "category": "OMM Client",
+  "description": "A plugin to detect participants based on an RFID chip",
+  "controls": [
+    {
+      "label": "detector",
+      "name": "combobox_detector",
+      "type": "combobox",
+      "options": [
+        "form",
+        "keypress",
+        "rfid"
+      ],
+      "var": "detector"
+    },
+    {
+      "label": "Serial port",
+      "name": "line_edit_serial_port",
+      "info": "For SeedDispenser",
+      "type": "line_edit",
+      "var": "serial_port"
+    },
+    {
+      "label": "Variable",
+      "name": "line_edit_participant_variable",
+      "info": "To store participant identifier",
+      "type": "line_edit",
+      "var": "participant_variable"
+    }
+  ]
+}

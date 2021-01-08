@@ -1,0 +1,27 @@
+{
+  "category": "OMM Client",
+  "description": "A plugin for requesting jobs",
+  "controls": [
+    {
+      "label": "Loop for testing",
+      "name": "line_edit_test_loop",
+      "type": "line_edit",
+      "info": "Defines variables during development",
+      "var": "test_loop"
+    },
+    {
+      "label": "Randomly select job from block",
+      "name": "checkbox_block_select",
+      "type": "checkbox",
+      "var": "block_select"
+    },
+    {
+      "label": "Block size",
+      "name": "spinbox_block_size",
+      "type": "spinbox",
+      "var": "block_size",
+      "min_val": 2,
+      "max_val": 10000
+    }
+  ]
+}

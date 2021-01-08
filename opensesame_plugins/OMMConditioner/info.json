@@ -1,0 +1,42 @@
+{
+  "category": "OMM Client",
+  "description": "A plugin for dispensing rewards",
+  "controls": [
+    {
+      "label": "conditioner",
+      "name": "combobox_conditioner",
+      "type": "combobox",
+      "options": [
+        "Dummy",
+        "SeedDispenser"
+      ],
+      "var": "conditioner"
+    },
+    {
+      "label": "Serial port",
+      "name": "line_edit_serial_port",
+      "info": "For SeedDispenser",
+      "type": "line_edit",
+      "var": "serial_port"
+    },
+    {
+      "label": "Reward (seeds)",
+      "name": "checkbox_reward",
+      "type": "checkbox",
+      "var": "reward"
+    },
+    {
+      "label": "Sound",
+      "name": "combobox_sound",
+      "type": "combobox",
+      "options": [
+        "do nothing",
+        "left",
+        "right",
+        "both",
+        "off"
+      ],
+      "var": "sound"
+    }
+  ]
+}
