@@ -3,11 +3,9 @@
 from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 import os
-import time
 import tempfile
 import hashlib
 import requests
-import json
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
 from openmonkeymind._exceptions import (
     NoJobsForParticipant,
@@ -16,9 +14,11 @@ from openmonkeymind._exceptions import (
     FailedToSetJobStates,
     FailedToDeleteJobs,
     FailedToInsertJobs,
-    FailedToGetJobs
+    FailedToDownloadExperiment
 )
 from libopensesame.experiment import experiment
+
+TIMEOUT_AVAILABLE = 2  # Number of seconds to wait for healthz endpoint
 
 
 class Job(BaseJob):
@@ -119,9 +119,9 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             tempfile.gettempdir(),
             hashlib.md5(safe_encode(path + updated_at)).hexdigest() + '.osexp'
         )
-        # If a cached file that matches in name and size exists, we re-use it. 
-        # The file name also includes the updated_at fields, and thus 
-        # re-uploading a new experiment with the same size will still refresh 
+        # If a cached file that matches in name and size exists, we re-use it.
+        # The file name also includes the updated_at fields, and thus
+        # re-uploading a new experiment with the same size will still refresh
         # the cache.
         if os.path.exists(cache_path) and os.path.getsize(cache_path) == size:
             oslogger.info('using cached {}'.format(cache_path))
@@ -146,7 +146,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self._participant = participant
         self._study = json['id']
         self._job_count = json['jobs_count']
-        # The participant metadata is optional, and is None if no metadata has 
+        # The participant metadata is optional, and is None if no metadata has
         # been specified.
         metadata = json['participants'][0]['meta']
         if metadata is None:
@@ -160,7 +160,10 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
         oslogger.info('check server at {}'.format('healthz'))
         try:
-            response = requests.get(self._base_url + 'healthz')
+            response = requests.get(
+                self._base_url + 'healthz',
+                timeout=TIMEOUT_AVAILABLE
+            )
         except requests.exceptions.ConnectionError:
             return False
         return response.ok
@@ -212,7 +215,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
     def delete_jobs(self, from_index, to_index):
         
-        json = self._delete(
+        self._delete(
             'studies/{}/jobs/{}/{}'.format(
                 self._study,
                 from_index,
