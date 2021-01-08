@@ -42,19 +42,19 @@ The development of Open Monkey Mind was supported by ERC Advanced grant COVOPRIM
 You can install OpenMonkeyMind through PyPi/ pip:
 
 ```
-pip install openmonkeymind
+pip install opensesame-extension-omm
 ```
 
 Or through Anaconda (if you're running an Anaconda Python environment):
 
 ```
-conda install openmonkeymind -c cogsci -y
+conda install opensesame-extension-omm -c cogsci -y
 ```
 
 To run these commands in the OpenSesame console, you need to prefix them with `!`:
 
 ```
-!conda install openmonkeymind -c cogsci -y
+!conda install opensesame-extension-omm -c cogsci -y
 ```
 
 
