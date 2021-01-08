@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='opensesame-extension-omm',
-    version='0.2.0',
+    version='0.2.1',
     description='OpenMonkeyMind plugins and extension for OpenSesame',
     author='Sebastiaan Mathot',
     author_email='s.mathot@cogsci.nl',
@@ -28,7 +28,7 @@ setup(
                 'opensesame_extensions/OpenMonkeyMind/OpenMonkeyMind.py',
                 'opensesame_extensions/OpenMonkeyMind/omm-entry-point.osexp',
                 'opensesame_extensions/OpenMonkeyMind/omm-template.osexp',
-                'opensesame_extensions/OpenMonkeyMind/info.yaml',
+                'opensesame_extensions/OpenMonkeyMind/info.json',
                 'opensesame_extensions/OpenMonkeyMind/openmonkeymind.ui'
             ]
         ),
@@ -38,7 +38,7 @@ setup(
                 'opensesame_plugins/OMMAnnounce/OMMAnnounce.png',
                 'opensesame_plugins/OMMAnnounce/OMMAnnounce_large.png',
                 'opensesame_plugins/OMMAnnounce/OMMAnnounce.py',
-                'opensesame_plugins/OMMAnnounce/info.yaml',
+                'opensesame_plugins/OMMAnnounce/info.json',
             ]
         ),
         (
@@ -47,7 +47,7 @@ setup(
                 'opensesame_plugins/OMMRequestJob/OMMRequestJob_large.png',
                 'opensesame_plugins/OMMRequestJob/OMMRequestJob.png',
                 'opensesame_plugins/OMMRequestJob/OMMRequestJob.py',
-                'opensesame_plugins/OMMRequestJob/info.yaml',
+                'opensesame_plugins/OMMRequestJob/info.json',
             ]
         ),
         (
@@ -56,7 +56,7 @@ setup(
                 'opensesame_plugins/OMMDetectParticipant/OMMDetectParticipant_large.png',
                 'opensesame_plugins/OMMDetectParticipant/OMMDetectParticipant.png',
                 'opensesame_plugins/OMMDetectParticipant/OMMDetectParticipant.py',
-                'opensesame_plugins/OMMDetectParticipant/info.yaml',
+                'opensesame_plugins/OMMDetectParticipant/info.json',
             ]
         ),
         (
@@ -65,7 +65,7 @@ setup(
                 'opensesame_plugins/OMMConditioner/OMMConditioner_large.png',
                 'opensesame_plugins/OMMConditioner/OMMConditioner.png',
                 'opensesame_plugins/OMMConditioner/OMMConditioner.py',
-                'opensesame_plugins/OMMConditioner/info.yaml',
+                'opensesame_plugins/OMMConditioner/info.json',
             ]
         ),
         (
