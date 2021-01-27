@@ -57,6 +57,13 @@ To run these commands in the OpenSesame console, you need to prefix them with `!
 !conda install opensesame-extension-omm -c cogsci -y
 ```
 
+Ubuntu users can also install OpenMonkeyMind through the Rapunzel PPA:
+
+```
+sudo add-apt-repository ppa:smathot/rapunzel
+sudo apt update
+sudo apt install opensesame-extension-omm
+```
 
 ## Connecting to the OMM server
 
