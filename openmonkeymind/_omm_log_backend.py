@@ -2,6 +2,7 @@
 
 from libopensesame.py3compat import *
 import os
+import json
 from openexp._log.csv import Csv
 from libopensesame.oslogging import oslogger
 
@@ -46,9 +47,25 @@ class LogBackend(Csv):
             var: self.experiment.var.get(var, _eval=False, default=u'NA')
             for var in var_list
         }
+        json = {
+            var: val
+            for var, val in json.items()
+            if self._can_serialize(var, val)
+        }
         self.write(json)
         if self._omm.connected:
             self._omm.send_current_job_results(json)
+            
+    def _can_serialize(self, var, val):
+        
+        try:
+            json.dumps(val)
+        except TypeError:
+            oslogger.warning(
+                'failed to send variable {} to server'.format(var)
+            )
+            return False
+        return True
 
 
 # Alias for the backend class to find
