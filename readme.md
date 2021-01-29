@@ -62,7 +62,7 @@ Ubuntu users can also install OpenMonkeyMind through the Rapunzel PPA:
 ```
 sudo add-apt-repository ppa:smathot/rapunzel
 sudo apt update
-sudo apt install opensesame-extension-omm
+sudo apt install python3-opensesame-extension-omm
 ```
 
 ## Connecting to the OMM server
