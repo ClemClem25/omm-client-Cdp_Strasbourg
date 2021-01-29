@@ -140,12 +140,19 @@ class qtOMMRequestJob(OMMRequestJob, QtAutoPlugin):
         OMMRequestJob.__init__(self, name, experiment, script)
         QtAutoPlugin.__init__(self, __file__)
         
+    def _enable_variable_block_size(self):
+        
+        self.spinbox_block_size.setEnabled(
+            isinstance(self.var.get('block_size', _eval=False), int) and
+            self.var.block_select == 'yes'
+        )
+        
     def apply_edit_changes(self):
         
         super().apply_edit_changes()
-        self.spinbox_block_size.setEnabled(self.var.block_select == 'yes')
+        self._enable_variable_block_size()
     
     def edit_widget(self):
         
         super().edit_widget()
-        self.spinbox_block_size.setEnabled(self.var.block_select == 'yes')
+        self._enable_variable_block_size()
