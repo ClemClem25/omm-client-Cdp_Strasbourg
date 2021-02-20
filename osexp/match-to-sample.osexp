@@ -1,0 +1,156 @@
+---
+API: 2.1
+Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perception
+  & Psychophysics*, *51*(6), 599–606. <http://doi.org/10.3758/BF03211656>
+
+  '
+Description: An attentional capture experiment, loosely based on Theeuwes (1992)
+OpenSesame: 3.3.8
+Platform: nt
+Title: Attentional capture
+---
+set width 1024
+set uniform_coordinates yes
+set title "OMM Match to sample"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/opensesame_extensions\\OpenMonkeyMind"
+set disable_garbage_collection yes
+set description "A basic match-to-sample task"
+set coordinates relative
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background black
+
+define sketchpad blank
+	set duration 0
+	set description "Displays stimuli"
+
+define sketchpad circle_target
+	set duration 500
+	set description "Displays stimuli"
+	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=0.0 y=0.0 z_index=0
+
+define sketchpad cross_target
+	set duration 500
+	set description "Displays stimuli"
+	draw line color=blue penwidth=16 show_if=always x1=0.0 x2=0.0 y1=-64.0 y2=64.0 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-64.0 x2=64.0 y1=0.0 y2=0.0 z_index=0
+
+define sketchpad delay
+	set duration 500
+	set description "Displays stimuli"
+
+define sequence empty_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "The main sequence of the experiment"
+	run test_loop always
+	run request_job always
+	run trial_sequence always
+	run make_task_infinite always
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define inline_script make_task_infinite
+	set description "Executes Python code"
+	___run__
+	from openmonkeymind import Job
+	
+	# The job table contains only two entries, and we reset both
+	# of them after each trial. This way the task never finishes.
+	if omm.connected:
+	    omm.set_job_states(1, 3, Job.PENDING)
+	__end__
+	set _prepare ""
+
+define OMMRequestJob request_job
+	set test_loop test_loop
+	set omm_server "127.0.0.1"
+	set omm_port 3000
+	set omm_api 1
+	set description "Plugin to request current job for Open Monkey Mind"
+	set block_size 2
+	set block_select yes
+	set _run ""
+	set _prepare ""
+
+define sketchpad response_display
+	set duration 0
+	set description "Displays stimuli"
+	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=224 y=224 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-224 x2=-224 y1=160 y2=288 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-288 x2=-160 y1=224 y2=224 z_index=0
+
+define OMMConditioner reward
+	set sound "do nothing"
+	set serial_port COM8
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define loop test_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 correct_response 2
+	setcycle 0 target circle
+	setcycle 1 correct_response 1
+	setcycle 1 target cross
+	run empty_sequence
+
+define touch_response touch_response
+	set timeout infinite
+	set show_cursor yes
+	set linked_sketchpad ""
+	set flush yes
+	set event_type mouseclick
+	set duration mouseclick
+	set description "A grid-based response item, convenient for touch screens"
+	set _nrow 1
+	set _ncol 2
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run circle_target "[target] = circle"
+	run cross_target "[target] = cross"
+	run delay always
+	run response_display always
+	run touch_response always
+	run blank always
+	run reward "[correct] = 1"
+	run logger always
+

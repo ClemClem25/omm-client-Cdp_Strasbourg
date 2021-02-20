@@ -1,0 +1,145 @@
+---
+API: 2.1
+Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perception
+  & Psychophysics*, *51*(6), 599–606. <http://doi.org/10.3758/BF03211656>
+
+  '
+Description: An attentional capture experiment, loosely based on Theeuwes (1992)
+OpenSesame: 3.3.8
+Platform: nt
+Title: Attentional capture
+---
+set width 1024
+set uniform_coordinates yes
+set title "OMM Lexical Decision"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/opensesame_extensions\\OpenMonkeyMind"
+set disable_garbage_collection yes
+set description "Loosely based on Grainger et al. (2012)"
+set coordinates relative
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background black
+
+define sketchpad blank
+	set duration 0
+	set description "Displays stimuli"
+
+define sequence empty_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "The main sequence of the experiment"
+	run test_loop always
+	run request_job always
+	run trial_sequence always
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define OMMRequestJob request_job
+	set test_loop test_loop
+	set omm_server "127.0.0.1"
+	set omm_port 3000
+	set omm_api 1
+	set description "Plugin to request current job for Open Monkey Mind"
+	set block_size 10
+	set block_select no
+	set _run ""
+	set _prepare ""
+
+define sketchpad response_display
+	set duration 0
+	set description "Displays stimuli"
+	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=224 y=224 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-224 x2=-224 y1=160 y2=288 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-288 x2=-160 y1=224 y2=224 z_index=0
+
+define OMMConditioner reward
+	set sound "do nothing"
+	set serial_port COM8
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define sketchpad target
+	set duration 1000
+	set description "Displays stimuli"
+	draw textline center=1 color=yellow font_bold=no font_family=sans font_italic=no font_size=64 html=yes show_if=always text="[target]" x=0 y=0 z_index=0
+
+define loop test_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 6
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 correct_response 2
+	setcycle 0 category word
+	setcycle 0 target apple
+	setcycle 1 correct_response 1
+	setcycle 1 category nonword
+	setcycle 1 target ipple
+	setcycle 2 correct_response 2
+	setcycle 2 category word
+	setcycle 2 target turtle
+	setcycle 3 correct_response 1
+	setcycle 3 category nonword
+	setcycle 3 target ourtel
+	setcycle 4 correct_response 2
+	setcycle 4 category word
+	setcycle 4 target magic
+	setcycle 5 correct_response 1
+	setcycle 5 category nonword
+	setcycle 5 target mocag
+	run empty_sequence
+
+define touch_response touch_response
+	set timeout infinite
+	set show_cursor yes
+	set linked_sketchpad ""
+	set flush yes
+	set event_type mouseclick
+	set duration mouseclick
+	set description "A grid-based response item, convenient for touch screens"
+	set _nrow 1
+	set _ncol 2
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run target always
+	run response_display always
+	run touch_response always
+	run blank always
+	run reward "[correct] = 1"
+	run logger always
+

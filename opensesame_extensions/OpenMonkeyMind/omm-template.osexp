@@ -1,13 +1,9 @@
 ---
 API: 2.1
-Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perception
-  & Psychophysics*, *51*(6), 599–606. <http://doi.org/10.3758/BF03211656>
-
-  '
-Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.6a1
+Description: A template experiment for OpenMonkeyMind
+OpenSesame: 3.3.8
 Platform: posix
-Title: Attentional capture
+Title: OMM Template Experiment
 ---
 set width 1024
 set uniform_coordinates yes
@@ -34,7 +30,6 @@ set font_family mono
 set font_bold no
 set experiment_path "/home/sebastiaan/git/omm-client/osexp"
 set disable_garbage_collection yes
-set description "Loosely based on Theeuwes (1992)"
 set coordinates relative
 set compensation 0
 set color_backend psycho
@@ -53,7 +48,6 @@ define sequence experiment
 	run test_loop always
 	run request_job always
 	run trial_sequence always
-	run OMMSendCurrentJobResults always
 
 define sketchpad fixdot
 	set duration keypress
@@ -103,4 +97,3 @@ define sequence trial_sequence
 	run fixdot always
 	run logger always
 	run reward always
-
