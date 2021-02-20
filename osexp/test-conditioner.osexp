@@ -1,0 +1,130 @@
+---
+API: 2.1
+OpenSesame: 3.3.8
+Platform: nt
+---
+set width 1024
+set uniform_coordinates yes
+set title "Test Conditioner"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run init always
+	run test_loop always
+
+define inline_script init
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	var.conditioner_port = 'COM8'
+	__end__
+
+define sketchpad menu
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Test Conditioner on [conditioner_port]<br /><br />Press 's' for reward<br />Press 'l' for left speaker<br />Press 'r' for right speaker<br />Press 'b' for both speakers<br />Press 'q' to quit<br />" x=0 y=0 z_index=0
+
+define repeat_cycle repeat_cycle
+	set description "Optionally repeat a cycle from a loop"
+	set condition "[response] != q"
+
+define synth sound
+	set volume 1
+	set pan 0
+	set osc sine
+	set length 1000
+	set freq 440
+	set duration 0
+	set description "A basic sound synthesizer"
+	set decay 5
+	set attack 0
+
+define OMMConditioner test_both_speakers
+	set sound both
+	set serial_port "[conditioner_port]"
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define OMMConditioner test_left_speaker
+	set sound left
+	set serial_port "[conditioner_port]"
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define loop test_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run test_sequence
+
+define OMMConditioner test_reward
+	set sound off
+	set serial_port "[conditioner_port]"
+	set reward yes
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define OMMConditioner test_right_speaker
+	set sound right
+	set serial_port "[conditioner_port]"
+	set reward no
+	set description "Conditioner plugin for Open Monkey Mind"
+	set conditioner SeedDispenser
+
+define sequence test_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run menu always
+	run repeat_cycle always
+	run test_reward "[response] = s"
+	run test_left_speaker "[response] = l"
+	run test_right_speaker "[response] = r"
+	run test_both_speakers "[response] = b"
+	run sound "[response] != q"
+	run waiting always
+
+define sketchpad waiting
+	set duration 1000
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Testing ..." x=0 y=0 z_index=0
+
