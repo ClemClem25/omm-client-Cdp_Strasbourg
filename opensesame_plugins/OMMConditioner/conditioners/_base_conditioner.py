@@ -14,7 +14,7 @@ class BaseConditioner:
     @property
     def clock(self):
         
-        return self._experiment.clock        
+        return self._experiment.clock
     
     def reward(self):
         
