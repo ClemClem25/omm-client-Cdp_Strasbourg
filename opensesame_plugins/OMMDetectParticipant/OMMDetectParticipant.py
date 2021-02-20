@@ -96,11 +96,14 @@ class OMMDetectParticipant(Item):
             # If we have the minimum of repetitions of the RFID, then we are
             # satisfied and return the first RFID.
             if len(rfids) >= MIN_REP:
-                rfid = rfids[0]
+                rfid = safe_decode(rfids[0])
                 break
         oslogger.warning('rfid detected: {}'.format(rfid))
         s.close()
-        self.experiment.var.set(self.var.participant_variable, rfid)
+        self.experiment.var.set(
+            self.var.participant_variable,
+            '/{}/'.format(rfid)  # Flank with / to make sure it's a string
+        )
     
     def prepare(self):
         
