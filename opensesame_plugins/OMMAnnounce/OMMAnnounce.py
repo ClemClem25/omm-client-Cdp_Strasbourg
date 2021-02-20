@@ -37,7 +37,8 @@ class OMMAnnounce(BaseOMMPlugin, Item):
         # Get the experiment and patch it so that re-uses the environment of
         # the current experiment, i.e. it doesn't create its own window etc.
         try:
-            exp = self._openmonkeymind.announce(self.var.omm_participant)
+            # Strip the / characters from the participant id
+            exp = self._openmonkeymind.announce(self.var.omm_participant[1:-1])
         except (
             NoJobsForParticipant,
             requests.exceptions.ConnectionError
@@ -46,7 +47,7 @@ class OMMAnnounce(BaseOMMPlugin, Item):
             exp = self._fallback_experiment()
         item_stack.item_stack_singleton.clear = lambda: None
         exp.init_display = lambda: None
-        exp.end = lambda: None
+        exp.end = lambda: exp.cleanup()  # only call cleanup functions
         exp.window = self.experiment.window
         exp.var.width = self.experiment.var.width
         exp.var.height = self.experiment.var.height
