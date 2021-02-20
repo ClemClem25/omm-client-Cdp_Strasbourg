@@ -3,6 +3,7 @@
 from libopensesame.py3compat import *
 import conditioners
 from libopensesame.item import Item
+from libopensesame.oslogging import oslogger
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
 
@@ -23,14 +24,21 @@ class OMMConditioner(Item):
             return
         if 'omm_conditioner' in self.python_workspace:
             self._conditioner = self.python_workspace['omm_conditioner']
+            oslogger.info('reusing conditioner')
             return
+        oslogger.info('initializing conditioner')
         cls = getattr(conditioners, self.var.conditioner)
         self._conditioner = cls(
             experiment=self.experiment,
             port=self.var.serial_port
         )
         self.python_workspace['omm_conditioner'] = self._conditioner
-        self.experiment.cleanup_functions.append(self._conditioner.close)
+        self.experiment.cleanup_functions.append(self._close_conditioner)
+        
+    def _close_conditioner(self):
+        
+        oslogger.info('closing conditioner')
+        self._conditioner.close()
         
     def prepare(self):
         
