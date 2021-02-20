@@ -38,13 +38,18 @@ class OMMAnnounce(BaseOMMPlugin, Item):
         # the current experiment, i.e. it doesn't create its own window etc.
         try:
             exp = self._openmonkeymind.announce(self.var.omm_participant)
-        except (NoJobsForParticipant, requests.exceptions.ConnectionError) as e:
+        except (
+            NoJobsForParticipant,
+            requests.exceptions.ConnectionError
+        ) as e:
             oslogger.warning(e)
             exp = self._fallback_experiment()
         item_stack.item_stack_singleton.clear = lambda: None
         exp.init_display = lambda: None
         exp.end = lambda: None
         exp.window = self.experiment.window
+        exp.var.width = self.experiment.var.width
+        exp.var.height = self.experiment.var.height
         exp.logfile = self.var.omm_local_logfile
         exp.python_workspace['win'] = self.experiment.window
         exp.python_workspace['omm'] = self._openmonkeymind
