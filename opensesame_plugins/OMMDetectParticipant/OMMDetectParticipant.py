@@ -1,14 +1,17 @@
 # coding=utf-8
 
 import time
+from openexp.keyboard import Keyboard
 from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 from libopensesame import widgets
 from libopensesame.item import Item
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
-SLEEP_TIME = .05
-RFID_LENGTH = 19
+RFID_LENGTH = 18    # The number of bytes of an RFID
+RFID_SEP = b'\r'    # The byte that separates RFIDs in the buffer
+MIN_REP = 1         # The minimum number of RFIDs that we want to read, in case
+                    # we want to double-check.
 
 
 class OMMDetectParticipant(Item):
@@ -47,7 +50,6 @@ class OMMDetectParticipant(Item):
     
     def _prepare_keypress(self):
         
-        from openexp.keyboard import Keyboard
         self._keyboard = Keyboard(self.experiment)
         self.run = self._run_keypress
     
@@ -59,18 +61,45 @@ class OMMDetectParticipant(Item):
 
     def _prepare_rfid(self):
         
-        import serial
-        self._serial = serial.Serial(self.var.serial_port, timeout=0.01)
         self.run = self._run_rfid
     
     def _run_rfid(self):
         
-        self._serial.flushInput()
+        import serial
+        
+        keyboard = Keyboard(self.experiment, timeout=0)
+        s = serial.Serial(self.var.serial_port, timeout=0.01)
+        s.flushInput()
+        buffer = b''
         while True:
-            rfid = _serial.read(RFID_LENGTH)
-            if rfid:
+            # Also accept key presses as RFIDs for testing.
+            key, _ = keyboard.get_key()
+            if key:
+                rfid = key
                 break
-        self._serial.close()
+            # Read at most RFID_LENGTH bytes from the serial port. This can
+            # also result in fewer bytes.
+            buffer += s.read(RFID_LENGTH)
+            # Split the buffer based on the RFID separator byte, and keep only
+            # those elements that have the expected length, in case the buffer
+            # contains some fragments of RFIDs.
+            rfids = [
+                rfid for rfid in buffer.split(RFID_SEP)
+                if len(rfid) == RFID_LENGTH
+            ]
+            # If there more than one different RFIDs, then something went wrong
+            # and we reset the buffer.
+            if len(set(rfids)) > 1:
+                oslogger.warning('inconsistent rfids')
+                buffer = b''
+                continue
+            # If we have the minimum of repetitions of the RFID, then we are
+            # satisfied and return the first RFID.
+            if len(rfids) >= MIN_REP:
+                rfid = rfids[0]
+                break
+        oslogger.warning('rfid detected: {}'.format(rfid))
+        s.close()
         self.experiment.var.set(self.var.participant_variable, rfid)
     
     def prepare(self):
