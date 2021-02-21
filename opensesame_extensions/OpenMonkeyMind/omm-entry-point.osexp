@@ -29,6 +29,7 @@ set coordinates uniform
 set compensation 0
 set canvas_backend {canvas_backend}
 set background black
+{omm_yaml_vars}
 
 define OMMAnnounce announce
 	set omm_server "{omm_server}"
@@ -47,7 +48,7 @@ define repeat_cycle be_infinite
 	set condition always
 
 define OMMDetectParticipant detect
-	set serial_port COM3
+	set serial_port "[=var.get('omm_rfid_port', 'COM3')]"
 	set participant_variable participant
 	set detector "{omm_detector}"
 

@@ -134,6 +134,20 @@ class OpenMonkeyMind(BaseExtension):
         
         with open(self.ext_resource('omm-entry-point.osexp')) as fd:
             script = fd.read()
+        # The YAML data is also include in the entry point experiment as a
+        # set of global variables.
+        try:
+            yaml_data = yaml.safe_load(cfg.omm_yaml_data)
+            if yaml_data is None:
+                yaml_data = {}
+            assert(isinstance(yaml_data, dict))
+        except AssertionError:
+            yaml_vars = ''
+        else:
+            yaml_vars = '\n'.join([
+                self.experiment.syntax.create_cmd('set', [key, value])
+                for key, value in yaml_data.items()
+            ])
         script = script.format(
             omm_server=cfg.omm_server,
             omm_port=cfg.omm_port,
@@ -141,6 +155,7 @@ class OpenMonkeyMind(BaseExtension):
             omm_width=cfg.omm_width,
             omm_detector=cfg.omm_detector,
             omm_yaml_data=textwrap.indent(cfg.omm_yaml_data, prefix='\t'),
+            omm_yaml_vars=yaml_vars,
             omm_local_logfile=cfg.omm_local_logfile,
             omm_fallback_experiment=cfg.omm_fallback_experiment,
             canvas_backend=cfg.omm_backend
