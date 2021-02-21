@@ -40,10 +40,16 @@ class Job(BaseJob):
         # reset and done again. In this case, the field is a list, and we
         # get the last entry from the list.
         if json['pivot']['data'] is not None:
-            if isinstance(json['pivot']['data'], list):
-                self._data.update(json['pivot']['data'][-1])
-            else:
-                self._data.update(json['pivot']['data'])
+            pivot_data = json['pivot']['data']
+            if isinstance(pivot_data, list):
+                pivot_data = pivot_data[-1]
+            # Copy the pivot table, except for those variables that already
+            # exist in the data, because we don't overwrite the variables that
+            # were explicitly set by the job.
+            for key, val in pivot_data.items():
+                if key in self._data:
+                    continue
+                self._data[key] = val
         self._state = json['pivot'].get('status_id', Job.STARTED)
 
 
