@@ -2,7 +2,7 @@
 API: 2.1
 Description: A template experiment for OpenMonkeyMind
 OpenSesame: 3.3.8
-Platform: posix
+Platform: nt
 Title: OMM Template Experiment
 ---
 set width 1024
@@ -28,8 +28,9 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/home/sebastiaan/git/omm-client/osexp"
+set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/opensesame_extensions/OpenMonkeyMind"
 set disable_garbage_collection yes
+set description "The main experiment item"
 set coordinates relative
 set compensation 0
 set color_backend psycho
@@ -45,7 +46,7 @@ define sequence empty_sequence
 define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
-	run test_loop always
+	run test_loop never
 	run request_job always
 	run trial_sequence always
 
@@ -72,7 +73,7 @@ define OMMRequestJob request_job
 
 define OMMConditioner reward
 	set sound "do nothing"
-	set serial_port COM4
+	set serial_port "[=var.get('omm_conditioner_port', 'COM4')]"
 	set reward yes
 	set description "Conditioner plugin for Open Monkey Mind"
 	set conditioner Dummy
@@ -97,3 +98,4 @@ define sequence trial_sequence
 	run fixdot always
 	run logger always
 	run reward always
+

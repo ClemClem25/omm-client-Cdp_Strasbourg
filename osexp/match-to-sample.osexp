@@ -19,10 +19,10 @@ set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
-set sampler_backend psycho
+set sampler_backend legacy
 set round_decimals 2
-set mouse_backend psycho
-set keyboard_backend psycho
+set mouse_backend legacy
+set keyboard_backend legacy
 set height 768
 set fullscreen no
 set form_clicks no
@@ -32,14 +32,14 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/opensesame_extensions\\OpenMonkeyMind"
+set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/osexp"
 set disable_garbage_collection yes
 set description "A basic match-to-sample task"
 set coordinates relative
 set compensation 0
-set color_backend psycho
-set clock_backend psycho
-set canvas_backend psycho
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
 set bidi no
 set background black
 
@@ -50,13 +50,13 @@ define sketchpad blank
 define sketchpad circle_target
 	set duration 500
 	set description "Displays stimuli"
-	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=0.0 y=0.0 z_index=0
+	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=0 y=0 z_index=0
 
 define sketchpad cross_target
 	set duration 500
 	set description "Displays stimuli"
-	draw line color=blue penwidth=16 show_if=always x1=0.0 x2=0.0 y1=-64.0 y2=64.0 z_index=0
-	draw line color=blue penwidth=16 show_if=always x1=-64.0 x2=64.0 y1=0.0 y2=0.0 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=0 x2=0 y1=-64 y2=64 z_index=0
+	draw line color=blue penwidth=16 show_if=always x1=-64 x2=64 y1=0 y2=0 z_index=0
 
 define sketchpad delay
 	set duration 500
@@ -69,7 +69,7 @@ define sequence empty_sequence
 define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
-	run test_loop always
+	run test_loop never
 	run request_job always
 	run trial_sequence always
 	run make_task_infinite always
@@ -110,13 +110,12 @@ define sketchpad response_display
 
 define OMMConditioner reward
 	set sound "do nothing"
-	set serial_port COM8
+	set serial_port "[=var.get('omm_conditioner_port', 'COM4')]"
 	set reward yes
 	set description "Conditioner plugin for Open Monkey Mind"
 	set conditioner SeedDispenser
 
 define loop test_loop
-	set source_file ""
 	set source table
 	set repeat 1
 	set order random

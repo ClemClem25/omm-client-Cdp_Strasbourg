@@ -32,7 +32,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/opensesame_extensions\\OpenMonkeyMind"
+set experiment_path "C:/Users/MWP-88AE1DB184B9/Documents/git/omm-client/osexp"
 set disable_garbage_collection yes
 set description "Loosely based on Grainger et al. (2012)"
 set coordinates relative
@@ -54,7 +54,7 @@ define sequence empty_sequence
 define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
-	run test_loop always
+	run test_loop never
 	run request_job always
 	run trial_sequence always
 
@@ -77,12 +77,12 @@ define sketchpad response_display
 	set duration 0
 	set description "Displays stimuli"
 	draw circle color=aqua fill=1 penwidth=1 r=64 show_if=always x=224 y=224 z_index=0
-	draw line color=blue penwidth=16 show_if=always x1=-224 x2=-224 y1=160 y2=288 z_index=0
-	draw line color=blue penwidth=16 show_if=always x1=-288 x2=-160 y1=224 y2=224 z_index=0
+	draw line color=blue penwidth=32 show_if=always x1=-224 x2=-224 y1=160 y2=288 z_index=0
+	draw line color=blue penwidth=32 show_if=always x1=-288 x2=-160 y1=224 y2=224 z_index=0
 
 define OMMConditioner reward
 	set sound "do nothing"
-	set serial_port COM8
+	set serial_port "[=var.get('omm_conditioner_port', 'COM4')]"
 	set reward yes
 	set description "Conditioner plugin for Open Monkey Mind"
 	set conditioner SeedDispenser
