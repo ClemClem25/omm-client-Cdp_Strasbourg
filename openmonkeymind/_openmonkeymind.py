@@ -3,6 +3,7 @@
 from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 import os
+import time
 import tempfile
 import hashlib
 import requests
@@ -73,7 +74,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
     def _get(self, url_suffix, on_error, data=None):
         
-        oslogger.info('get {}'.format(url_suffix))
+        t0 = time.time()
         response = requests.get(self._base_url + url_suffix, json=data)
         if not response.ok:
             raise on_error()
@@ -82,21 +83,28 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             raise InvalidJSON(safe_decode(json))
         if self.verbose:
             oslogger.info(json)
+        oslogger.info('get {} ({:.3f}s)'.format(url_suffix, time.time() - t0))
         return json['data']
         
     def _delete(self, url_suffix, on_error):
         
-        oslogger.info('delete {}'.format(url_suffix))
+        t0 = time.time()
         response = requests.delete(self._base_url + url_suffix)
         if not response.ok:
             raise on_error()
+        oslogger.info(
+            'delete {} ({:.3f}s)'.format(url_suffix, time.time() - t0)
+        )
         
     def _cmd(self, desc, fnc, url_suffix, data, on_error):
         
-        oslogger.info('{} {}'.format(desc, url_suffix))
+        t0 = time.time()
         response = fnc(self._base_url + url_suffix, json=data)
         if not response.ok:
             raise on_error(response.text)
+        oslogger.info(
+            '{} {} ({:.3f}s)'.format(desc, url_suffix, time.time() - t0)
+        )
     
     def _patch(self, *args):
         
@@ -112,6 +120,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
 
     def _get_osexp(self, json):
         
+        t0 = time.time()
         for f in json['files']:
             if not f['type'] == 'experiment':
                 continue
@@ -139,6 +148,9 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
                 fd.write(response.content)
             oslogger.info('caching {} to {}'.format(path, cache_path))
         self._experiment = experiment(string=cache_path)
+        oslogger.info(
+            'building experiment ({:.3f} s)'.format(time.time() - t0)
+        )
         return self._experiment
     
     def announce(self, participant):
