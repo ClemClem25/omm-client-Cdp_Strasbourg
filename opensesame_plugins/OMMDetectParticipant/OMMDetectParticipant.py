@@ -47,6 +47,10 @@ class OMMDetectParticipant(Item):
     def _run_form(self):
         
         self._form._exec(focus_widget=self._text_input)
+        self.experiment.var.set(
+            self.var.participant_variable,
+            '/{}/'.format(self.var.get(self.var.participant_variable))
+        )
     
     def _prepare_keypress(self):
         
@@ -57,7 +61,10 @@ class OMMDetectParticipant(Item):
         
         key, timestamp = self._keyboard.get_key()
         oslogger.info('identifier: {}'.format(key))
-        self.experiment.var.set(self.var.participant_variable, key)
+        self.experiment.var.set(
+            self.var.participant_variable,
+            '/{}/'.format(key)
+        )
 
     def _prepare_rfid(self):
         
