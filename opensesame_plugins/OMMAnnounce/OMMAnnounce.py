@@ -9,7 +9,11 @@ from libopensesame.item import Item
 from libopensesame.experiment import experiment
 from libopensesame.oslogging import oslogger
 from libqtopensesame.items.qtautoplugin import QtAutoPlugin
-from openmonkeymind import BaseOMMPlugin, NoJobsForParticipant
+from openmonkeymind import (
+    BaseOMMPlugin,
+    NoJobsForParticipant,
+    ParticipantNotFound
+)
 from libopensesame import item_stack
 
 
@@ -40,6 +44,7 @@ class OMMAnnounce(BaseOMMPlugin, Item):
             # Strip the / characters from the participant id
             exp = self._openmonkeymind.announce(self.var.omm_participant[1:-1])
         except (
+            ParticipantNotFound,
             NoJobsForParticipant,
             requests.exceptions.ConnectionError
         ) as e:

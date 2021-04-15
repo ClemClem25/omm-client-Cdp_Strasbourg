@@ -2,6 +2,7 @@
 
 from libopensesame.py3compat import *
 
+class ParticipantNotFound(Exception): pass
 class NoJobsForParticipant(Exception): pass
 class FailedToSendJobResults(Exception): pass
 class InvalidJSON(Exception): pass

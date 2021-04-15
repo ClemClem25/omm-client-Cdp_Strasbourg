@@ -9,6 +9,7 @@ import hashlib
 import requests
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
 from openmonkeymind._exceptions import (
+    ParticipantNotFound,
     NoJobsForParticipant,
     FailedToSendJobResults,
     InvalidJSON,
@@ -155,6 +156,15 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
     
     def announce(self, participant):
         
+        json = self._get(
+            'participants/{}/canonical'.format(participant),
+            ParticipantNotFound
+        )
+        if not json['identifier']:
+            raise ParticipantNotFound()
+        if json['identifier'] != participant:
+            participant = json['identifier']
+            oslogger.info('using canonical id {}'.format(participant))
         json = self._get(
             'participants/{}/announce'.format(participant),
             NoJobsForParticipant
