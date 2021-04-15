@@ -27,9 +27,9 @@ class OMMDetectParticipant(Item):
         self._form = widgets.form(
             self.experiment,
             cols=(1),
-            rows=(1,5),
+            rows=(1, 5),
             item=self,
-            clicks=self.var.form_clicks==u'yes'
+            clicks=self.var.form_clicks == u'yes'
         )
         label = widgets.label(
             self._form,
