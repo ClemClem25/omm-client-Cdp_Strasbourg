@@ -72,13 +72,19 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         self.verbose = False
         if not oslogger.started:
             oslogger.start('omm')
+            
+    def _error(self, err):
+        
+        if isinstance(err, Exception):
+            raise err
+        raise err()
         
     def _get(self, url_suffix, on_error, data=None):
         
         t0 = time.time()
         response = requests.get(self._base_url + url_suffix, json=data)
         if not response.ok:
-            raise on_error()
+            self._error(on_error)
         json = response.json()
         if not isinstance(json, dict) or 'data' not in json:
             raise InvalidJSON(safe_decode(json))
@@ -92,7 +98,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         t0 = time.time()
         response = requests.delete(self._base_url + url_suffix)
         if not response.ok:
-            raise on_error()
+            self._error(on_error)
         oslogger.info(
             'delete {} ({:.3f}s)'.format(url_suffix, time.time() - t0)
         )
@@ -158,7 +164,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         
         json = self._get(
             'participants/{}/canonical'.format(participant),
-            ParticipantNotFound
+            ParticipantNotFound('participant id: {}'.format(participant))
         )
         if not json['identifier']:
             raise ParticipantNotFound()
@@ -167,7 +173,7 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             oslogger.info('using canonical id {}'.format(participant))
         json = self._get(
             'participants/{}/announce'.format(participant),
-            NoJobsForParticipant
+            NoJobsForParticipant('participant id: {}'.format(participant))
         )
         if not json['active']:
             raise NoJobsForParticipant()
