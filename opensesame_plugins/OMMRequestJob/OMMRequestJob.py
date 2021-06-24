@@ -69,7 +69,15 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
                 for job_index, job in enumerate(jobs)
                 if not job.finished
             ]
-            job_index = random.choice(unfished_job_indices)
+            # Get the first unfinished priotized job, if it exists
+            for job_index, job in enumerate(jobs):
+                if not job.finished and 'prioritize' in job and job['prioritize'] == 1:
+                    oslogger.info('job {} is prioritized'.format(job_index))
+                    job_index += min_job_index
+                    break
+            # Else get a random job
+            else:
+                job_index = random.choice(unfished_job_indices)
             job_index_in_block = \
                 self.var.block_size - len(unfished_job_indices) + 1
             oslogger.info('global job index: {}, job index in block: {}, block index {}'.format(
