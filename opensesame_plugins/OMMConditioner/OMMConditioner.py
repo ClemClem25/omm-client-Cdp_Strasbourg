@@ -17,6 +17,8 @@ class OMMConditioner(Item):
         self.var.serial_port = 'COM4'
         self.var.reward = 'yes'
         self.var.sound = 'do nothing'
+        self.var.motor_n_pulses = 5
+        self.var.motor_pause = 200
         
     def _init_conditioner(self):
         
@@ -30,7 +32,9 @@ class OMMConditioner(Item):
         cls = getattr(conditioners, self.var.conditioner)
         self._conditioner = cls(
             experiment=self.experiment,
-            port=self.var.serial_port
+            port=self.var.serial_port,
+            motor_n_pulses=self.var.motor_n_pulses,
+            motor_pause=self.var.motor_pause
         )
         self.python_workspace['omm_conditioner'] = self._conditioner
         self.experiment.cleanup_functions.append(self._close_conditioner)

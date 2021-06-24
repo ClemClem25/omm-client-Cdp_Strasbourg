@@ -19,8 +19,8 @@ SOUND_LEFT_OFF = b'S20'
 SOUND_RIGHT_ON = b'S31'
 SOUND_RIGHT_OFF = b'S30'
 # Parameter for seed dispenser
-MOTOR_N_PULSES = 5
-MOTOR_PAUSE = 200
+DEFAULT_MOTOR_N_PULSES = 5
+DEFAULT_MOTOR_PAUSE = 200
 
 
 class SeedDispenser(BaseConditioner):
@@ -29,6 +29,14 @@ class SeedDispenser(BaseConditioner):
         
         super(SeedDispenser, self).__init__(**kwargs)
         self._port = kwargs.get('port', DEFAULT_PORT)
+        self._motor_n_pulses = kwargs.get(
+            'motor_n_pulse',
+            DEFAULT_MOTOR_N_PULSES
+        )
+        self._motor_pause = kwargs.get(
+            'motor_pause',
+            DEFAULT_MOTOR_PAUSE
+        )
         self._serial = serial.Serial(self._port)
         
     def _stop(self, seed_dispenser=False, sound_left=False, sound_right=False):
@@ -43,13 +51,13 @@ class SeedDispenser(BaseConditioner):
     def reward(self):
         
         self._stop(seed_dispenser=True)
-        for _ in range(MOTOR_N_PULSES):
+        for _ in range(self._motor_n_pulses):
             self._serial.write(SEED_DISPENSER_ON)
             self._serial.flush()
-            self.clock.sleep(MOTOR_PAUSE)
+            self.clock.sleep(self._motor_pause)
             self._serial.write(SEED_DISPENSER_OFF)
             self._serial.flush()
-            self.clock.sleep(MOTOR_PAUSE)
+            self.clock.sleep(self._motor_pause)
 
     def sound_left(self):
         

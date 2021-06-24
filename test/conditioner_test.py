@@ -8,7 +8,12 @@ from conditioners import SeedDispenser
 
 exp = experiment(string='')
 exp.init_clock()
-sd = SeedDispenser(experiment=exp, port='/dev/ttyUSB0')
+sd = SeedDispenser(
+    experiment=exp,
+    port='/dev/ttyUSB0', 
+    motor_n_pulses=10,
+    motor_pause=1000
+)
 input('reward')
 sd.reward()
 input('sound left')
