@@ -7,6 +7,7 @@ import time
 import tempfile
 import hashlib
 import requests
+from json import dumps as json_dumps
 from openmonkeymind._baseopenmonkeymind import BaseOpenMonkeyMind, BaseJob
 from openmonkeymind._exceptions import (
     ParticipantNotFound,
@@ -16,7 +17,10 @@ from openmonkeymind._exceptions import (
     FailedToSetJobStates,
     FailedToDeleteJobs,
     FailedToInsertJobs,
-    FailedToDownloadExperiment
+    FailedToDownloadExperiment,
+    FailedToSetGenericStudyData,
+    FailedToSetGenericParticipantData,
+    FailedToSetGenericSessionData
 )
 from libopensesame.experiment import experiment
 
@@ -295,3 +299,70 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             }
         )
         return [Job(job) for job in json]
+        
+    @property
+    def generic_study_data(self):
+        
+        try:
+            return self._get(
+                'sessions?study_id={}'.format(self._study),
+                ValueError
+            )['data']
+        except ValueError:
+            return None
+        
+    @generic_study_data.setter
+    def generic_study_data(self, val):
+        
+        self._put(
+            'sessions',
+            {'study_id': self._study, 'data': json_dumps(val)},
+            FailedToSetGenericStudyData
+        )
+
+    @property
+    def generic_participant_data(self):
+        
+        try:
+            return self._get(
+                'sessions?participant_id={}'.format(self._participant),
+                ValueError
+            )['data']
+        except ValueError:
+            return None
+        
+    @generic_participant_data.setter
+    def generic_participant_data(self, val):
+        
+        self._put(
+            'sessions',
+            {'participant_id': self._participant, 'data': json_dumps(val)},
+            FailedToSetGenericParticipantData
+        )
+        
+    @property
+    def generic_session_data(self):
+        
+        try:
+            return self._get(
+                'sessions?participant_id={}&study_id={}'.format(
+                    self._participant,
+                    self._study
+                ),
+                ValueError
+            )['data']
+        except ValueError:
+            return None
+        
+    @generic_session_data.setter
+    def generic_session_data(self, val):
+        
+        self._put(
+            'sessions',
+            {
+                'participant_id': self._participant,
+                'study_id': self._study,
+                'data': json_dumps(val)
+            },
+            FailedToSetGenericSessionData
+        )

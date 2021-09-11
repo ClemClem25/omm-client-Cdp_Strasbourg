@@ -2,12 +2,16 @@
 
 from libopensesame.py3compat import *
 
-class ParticipantNotFound(Exception): pass
-class NoJobsForParticipant(Exception): pass
-class FailedToSendJobResults(Exception): pass
-class InvalidJSON(Exception): pass
-class FailedToDownloadExperiment(Exception): pass
-class FailedToSetJobStates(Exception): pass
-class FailedToDeleteJobs(Exception): pass
-class FailedToInsertJobs(Exception): pass
-class FailedToGetJobs(Exception): pass
+class OMMException(Exception): pass
+class ParticipantNotFound(OMMException): pass
+class NoJobsForParticipant(OMMException): pass
+class FailedToSendJobResults(OMMException): pass
+class InvalidJSON(OMMException): pass
+class FailedToDownloadExperiment(OMMException): pass
+class FailedToSetJobStates(OMMException): pass
+class FailedToDeleteJobs(OMMException): pass
+class FailedToInsertJobs(OMMException): pass
+class FailedToGetJobs(OMMException): pass
+class FailedToSetGenericStudyData(OMMException): pass
+class FailedToSetGenericParticipantData(OMMException): pass
+class FailedToSetGenericSessionData(OMMException): pass

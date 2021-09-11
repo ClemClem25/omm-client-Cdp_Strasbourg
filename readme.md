@@ -120,7 +120,7 @@ The `OMMConditioner` item allows for dispensing seed rewards (specific to Rousse
 
 ## The `omm` Python object
 
-<div class="ClassDoc YAMLDoc" id="omm" markdown="1">
+<span class="ClassDoc YAMLDoc" id="omm" markdown="1">
 
 # class __omm__
 
@@ -128,7 +128,7 @@ Allows for programmatic interaction with the OpenMonkeyMind server.
 Lives as the `omm` object in the Python workspace in OpenSesame
 experiments.
 
-<div class="FunctionDoc YAMLDoc" id="omm-announce" markdown="1">
+<span class="FunctionDoc YAMLDoc" id="omm-announce" markdown="1">
 
 ## function __omm\.announce__\(participant\)
 
@@ -145,49 +145,67 @@ __Returns:__
 
 An experiment object.
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-available" markdown="1">
+[omm.announce]: #omm-announce
+[announce]: #omm-announce
+
+<span class="PropertyDoc YAMLDoc" id="omm-available" markdown="1">
 
 ## property __omm.available__
 
 `True` when a server appears to be available, `False` otherwise.
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-connected" markdown="1">
+[omm.available]: #omm-available
+[available]: #omm-available
+
+<span class="PropertyDoc YAMLDoc" id="omm-connected" markdown="1">
 
 ## property __omm.connected__
 
 `True` when connected to a server, `False` otherwise.
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-current_job" markdown="1">
+[omm.connected]: #omm-connected
+[connected]: #omm-connected
+
+<span class="PropertyDoc YAMLDoc" id="omm-current_job" markdown="1">
 
 ## property __omm.current_job__
 
 The id of the current job. (This does not correspond to the position of the job in the job table. For that, see `get_current_job_index()`.)
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-current_participant" markdown="1">
+[omm.current_job]: #omm-current_job
+[current_job]: #omm-current_job
+
+<span class="PropertyDoc YAMLDoc" id="omm-current_participant" markdown="1">
 
 ## property __omm.current_participant__
 
 The identifier of the currently announced participant.
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-current_study" markdown="1">
+[omm.current_participant]: #omm-current_participant
+[current_participant]: #omm-current_participant
+
+<span class="PropertyDoc YAMLDoc" id="omm-current_study" markdown="1">
 
 ## property __omm.current_study__
 
 The id of the current study.
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-delete_jobs" markdown="1">
+[omm.current_study]: #omm-current_study
+[current_study]: #omm-current_study
+
+<span class="FunctionDoc YAMLDoc" id="omm-delete_jobs" markdown="1">
 
 ## function __omm\.delete\_jobs__\(from\_index, to\_index\)
 
@@ -200,9 +218,53 @@ __Arguments:__
 - `to_index` -- No description
 	- Type: int
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-get_current_job_index" markdown="1">
+[omm.delete_jobs]: #omm-delete_jobs
+[delete_jobs]: #omm-delete_jobs
+
+<span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
+
+## property __omm.generic_study_data__
+
+General-purpose data that is specific to the current participant,
+but shared across all studies. The data can be any object that can
+be serialized by JSON. If no data has been set, it has the value
+`None`.
+
+</span>
+
+[omm.generic_study_data]: #omm-generic_study_data
+[generic_study_data]: #omm-generic_study_data
+
+<span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
+
+## property __omm.generic_study_data__
+
+General-purpose data that is specific to the current participant
+and study. The data can be any object that can be serialized by
+JSON. If no data has been set, it has the value `None`.
+
+</span>
+
+[omm.generic_study_data]: #omm-generic_study_data
+[generic_study_data]: #omm-generic_study_data
+
+<span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
+
+## property __omm.generic_study_data__
+
+General-purpose data that is specific to the current study, but
+shared across all participants. The data can be any object that can
+be serialized by JSON. If no data has been set, it has the value
+`None`.
+
+</span>
+
+[omm.generic_study_data]: #omm-generic_study_data
+[generic_study_data]: #omm-generic_study_data
+
+<span class="FunctionDoc YAMLDoc" id="omm-get_current_job_index" markdown="1">
 
 ## function __omm\.get\_current\_job\_index__\(\)
 
@@ -212,9 +274,12 @@ __Returns:__
 
 The index of the current job in the job table. (This reflects the order of the job table and is therefore different from the job id as provided by the `current_job` property.)
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-get_jobs" markdown="1">
+[omm.get_current_job_index]: #omm-get_current_job_index
+[get_current_job_index]: #omm-get_current_job_index
+
+<span class="FunctionDoc YAMLDoc" id="omm-get_jobs" markdown="1">
 
 ## function __omm\.get\_jobs__\(from\_index, to\_index\)
 
@@ -233,9 +298,12 @@ A `list` of `Job` objects.
 
 - Type: list
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-insert_jobs" markdown="1">
+[omm.get_jobs]: #omm-get_jobs
+[get_jobs]: #omm-get_jobs
+
+<span class="FunctionDoc YAMLDoc" id="omm-insert_jobs" markdown="1">
 
 ## function __omm\.insert\_jobs__\(index, jobs\)
 
@@ -248,25 +316,34 @@ __Arguments:__
 - `jobs` -- A `list` of `dict` (not `Job`) objects, where the variables and values are keys and values of the dict.
 	- Type: list
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-job_count" markdown="1">
+[omm.insert_jobs]: #omm-insert_jobs
+[insert_jobs]: #omm-insert_jobs
+
+<span class="PropertyDoc YAMLDoc" id="omm-job_count" markdown="1">
 
 ## property __omm.job_count__
 
 The number of jobs in the job table.
 
-</div>
+</span>
 
-<div class="PropertyDoc YAMLDoc" id="omm-participant_metadata" markdown="1">
+[omm.job_count]: #omm-job_count
+[job_count]: #omm-job_count
+
+<span class="PropertyDoc YAMLDoc" id="omm-participant_metadata" markdown="1">
 
 ## property __omm.participant_metadata__
 
 A dict with metadata of the participant.
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-request_job" markdown="1">
+[omm.participant_metadata]: #omm-participant_metadata
+[participant_metadata]: #omm-participant_metadata
+
+<span class="FunctionDoc YAMLDoc" id="omm-request_job" markdown="1">
 
 ## function __omm\.request\_job__\(job\_index=None\)
 
@@ -287,9 +364,12 @@ No description
 
 - Type: Job
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-send_current_job_results" markdown="1">
+[omm.request_job]: #omm-request_job
+[request_job]: #omm-request_job
+
+<span class="FunctionDoc YAMLDoc" id="omm-send_current_job_results" markdown="1">
 
 ## function __omm\.send\_current\_job\_results__\(job\_results\)
 
@@ -301,9 +381,12 @@ __Arguments:__
 	- Description: A `dict` where keys are experimental variables, and values are values.
 	- Type: dict
 
-</div>
+</span>
 
-<div class="FunctionDoc YAMLDoc" id="omm-set_job_states" markdown="1">
+[omm.send_current_job_results]: #omm-send_current_job_results
+[send_current_job_results]: #omm-send_current_job_results
+
+<span class="FunctionDoc YAMLDoc" id="omm-set_job_states" markdown="1">
 
 ## function __omm\.set\_job\_states__\(from\_index, to\_index, state\)
 
@@ -323,9 +406,14 @@ __Arguments:__
 - `state` -- `Job.PENDING`, `Job.STARTED`, or `Job.FINISHED`.
 	- Type: int
 
-</div>
+</span>
 
-</div>
+[omm.set_job_states]: #omm-set_job_states
+[set_job_states]: #omm-set_job_states
+
+</span>
+
+[omm]: #omm
 
 
 ## License

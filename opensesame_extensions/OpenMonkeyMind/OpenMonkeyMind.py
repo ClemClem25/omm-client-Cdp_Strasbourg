@@ -8,6 +8,7 @@ import yaml
 import multiprocessing
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import QTimer
+from libopensesame.oslogging import oslogger
 from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
 from libqtopensesame.misc.translate import translation_context
@@ -164,6 +165,7 @@ class OpenMonkeyMind(BaseExtension):
         file = os.fdopen(fd, 'w')
         file.write(script)
         file.close()
+        oslogger.info('entry point at {}'.format(path))
         return path
         
     def _connect(self):
@@ -178,7 +180,7 @@ class OpenMonkeyMind(BaseExtension):
         
         path = self._compile_entry_point()
         self.main_window.open_file(path=path, add_to_recent=False)
-        os.remove(path)
+        # os.remove(path)
     
     def _template_experiment(self):
         

@@ -328,6 +328,62 @@ class BaseOpenMonkeyMind(object):
         """
         
         pass
+    
+    @property
+    def generic_study_data(self):
+        
+        """
+        name: generic_study_data
+        desc: |
+            General-purpose data that is specific to the current study, but
+            shared across all participants. The data can be any object that can
+            be serialized by JSON. If no data has been set, it has the value
+            `None`.
+        """
+        
+        pass
+    
+    @generic_study_data.setter
+    def generic_study_data(self, val):
+        
+        pass
+    
+    @property
+    def generic_participant_data(self):
+        
+        """
+        name: generic_study_data
+        desc: |
+            General-purpose data that is specific to the current participant,
+            but shared across all studies. The data can be any object that can
+            be serialized by JSON. If no data has been set, it has the value
+            `None`.
+        """
+        
+        pass
+    
+    @generic_participant_data.setter
+    def generic_participant_data(self, val):
+        
+        pass
+    
+    @property
+    def generic_session_data(self):
+        
+        """
+        name: generic_study_data
+        desc: |
+            General-purpose data that is specific to the current participant
+            and study. The data can be any object that can be serialized by
+            JSON. If no data has been set, it has the value `None`.
+        """
+        
+        pass
+    
+    @generic_session_data.setter
+    def generic_session_data(self, val):
+        
+        pass
 
     def __reduce__(self):
         

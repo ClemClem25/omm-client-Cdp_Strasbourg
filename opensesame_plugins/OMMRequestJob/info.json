@@ -10,18 +10,11 @@
       "var": "test_loop"
     },
     {
-      "label": "Randomly select job from block",
-      "name": "checkbox_block_select",
-      "type": "checkbox",
-      "var": "block_select"
-    },
-    {
-      "label": "Block size",
-      "name": "spinbox_block_size",
-      "type": "spinbox",
-      "var": "block_size",
-      "min_val": 2,
-      "max_val": 10000
+      "label": "Job index",
+      "name": "line_edit_job_index",
+      "type": "line_edit",
+      "info": "Leave empty to select next pending job",
+      "var": "job_index"
     }
   ]
 }

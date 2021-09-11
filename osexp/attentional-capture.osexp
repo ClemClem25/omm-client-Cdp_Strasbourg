@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.5
+OpenSesame: 3.3.10
 Platform: posix
 Title: Attentional capture
 ---
@@ -19,10 +19,10 @@ set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
-set sampler_backend psycho
+set sampler_backend legacy
 set round_decimals 2
-set mouse_backend psycho
-set keyboard_backend psycho
+set mouse_backend legacy
+set keyboard_backend legacy
 set height 768
 set fullscreen no
 set form_clicks no
@@ -37,9 +37,9 @@ set disable_garbage_collection yes
 set description "Loosely based on Theeuwes (1992)"
 set coordinates relative
 set compensation 0
-set color_backend psycho
-set clock_backend psycho
-set canvas_backend psycho
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
 set bidi no
 set background black
 
@@ -47,6 +47,8 @@ define OMMConditioner OMMConditioner
 	set sound "do nothing"
 	set serial_port COM4
 	set reward yes
+	set motor_pause 200
+	set motor_n_pulses 5
 	set description "Conditioner plugin for Open Monkey Mind"
 	set conditioner Dummy
 
@@ -55,6 +57,8 @@ define OMMRequestJob OMMRequestJob
 	set omm_server "127.0.0.1"
 	set omm_port 3000
 	set omm_api 1
+	set jonb_index ""
+	set job_index "[current_job]"
 	set description "Plugin to request current job for Open Monkey Mind"
 	set block_size 4
 	set block_select yes
@@ -90,6 +94,7 @@ define sequence dummy_sequence
 define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
+	run get_session_data always
 	run constants always
 	run functions always
 	run test_loop always
@@ -190,6 +195,38 @@ define inline_script functions
 	    cnvs += Line(x+dx, y+dy, x-dx, y-dy)
 	__end__
 
+define inline_script get_session_data
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	import random
+	
+	try:
+	    omm
+	except NameError:
+	    print('Testing!')
+	else:
+	    session_data = omm.generic_session_data  # retrieve session data from server
+	    print('session_data', session_data)
+	    # If there is no session data yet, this means that we are starting a new
+	    # session. Therefore, we generate a randomly ordered list of all job
+	    # indices, and an empty list of all jobs that are already done.
+	    if session_data is None:
+	        jobs_todo = list(range(1, omm.job_count + 1))
+	        random.shuffle(jobs_todo)
+	        jobs_done = []
+	    # Otherwise unpack the session data, which is a tuple consisting of a list
+	    # of job indices that are still to be done, and a list of (job_index, correct)
+	    # tuples that indicate which jobs have already been done, and whether the
+	    # associated response was correct.
+	    else:
+	        jobs_todo, jobs_done = session_data
+	    var.current_job = jobs_todo[0]
+	    print('current', var.current_job)
+	    print('todo', jobs_todo)
+	    print('done', jobs_done)
+	__end__
+
 define sketchpad green_fixdot
 	set duration 495
 	set description "Displays stimuli"
@@ -231,29 +268,27 @@ define sketchpad red_fixdot
 define inline_script repeat_practice_if_necessary
 	set description "Executes Python code"
 	___run__
-	from openmonkeymind import Job
+	import statistics
 	
 	PRACTICE_LENGTH = 4
 	MIN_ACC = .75
 	
-	
 	if omm.connected:
-	    print('Index in block: {}'.format(var.omm_job_index_in_block))
-	    if var.omm_job_index_in_block == 4 and var.omm_block_index == 1:
-	        practice_jobs = omm.get_jobs(1, PRACTICE_LENGTH + 1)
-	        acc = sum(job['correct'] for job in practice_jobs) / PRACTICE_LENGTH
+	    # Remember that the current job is now done, and whether the response was correct
+	    jobs_done.append((var.current_job, var.correct))
+	    # If we've done all practice trials, check if the accuracy was high enough
+	    if len(jobs_done) == PRACTICE_LENGTH:
+	        acc = statistics.mean(job_correct for job_index, job_correct in jobs_done)
 	        print('accuracy: {}'.format(acc))
+	        # If the accuracy was too low, we re-add all done jobs to the todo list and
+	        # clear the list of done jobs
 	        if acc < MIN_ACC:
-	            print('Before:')
-	            for j in omm.get_jobs(1, 9):
-	                print(j.id_, j.state)
-	            omm.set_job_states(1, PRACTICE_LENGTH + 1, Job.PENDING)
-	            print('After:')
-	            for j in omm.get_jobs(1, 9):
-	                print(j.id_, j.state)
+	            jobs_todo += [job_index for job_index, job_correct in jobs_done]
+	            jobs_done = []
 	            items['practice_repeat'].run()
 	        else:
 	            items['practice_done'].run()
+	    omm.generic_session_data = jobs_todo[1:], jobs_done  # update the session data on the server
 	__end__
 	set _prepare ""
 
