@@ -95,15 +95,13 @@ The `OMMRequestJob` item gets a job from the OMM server. Effectively, this sets 
 
 If the job contains the variables `_run` and/ or `_prepare` then those are assumed to contain Python code, which is executed during the Run or Prepare phase of the `OMMRequestJob` item.
 
-By default, the next unfinished job will be retrieved. That is, the job table will be consumed from top to bottom. By checking the box 'Randomly select job from block' you can change this behavior such that the job table is treated as a set of blocks, where the jobs inside each block are consumed in a random order, while the blocks themselves are consumed from top to bottom.
+By default, the next unfinished job will be retrieved. That is, the job table will be consumed from top to bottom. You can also specify a specific job index. This is mostly useful if you want to constrain the order in which jobs are executed.
 
 If you want to test the experiment by running it directly (i.e. without being connected to an OMM server), then you can indicate a 'Loop for testing'. In that case, a job will be emulated by randomly selecting a row from the `loop` table.
 
 The following variables are set automatically:
 
-- `omm_job_index` indicates the position of the job in the job table, where the first job is at index 1. If the 'Randomly select job from block' option is activated, this index still indicates the position in the job table, and not the position in which the jobs are actually retrieved.
-- `omm_block_index` indicates the current block if 'Randomly select job from block' option is activated. Otherwise it is set to `None`.
-- `omm_job_index_in_block` indicates the position of the current job in the current block if 'Randomly select job from block' option is activated. This index increments with every job that is retrieved, and is reset to 1 when a new block starts. If this option is deactivated, it is set to `None`.
+- `omm_job_index` indicates the position of the job in the job table, where the first job is at index 1.
 - `omm_job_count` indicates the number of jobs in the table.
 - `omm_job_id` indicates a unique identifier for the job. This identifier is different from `omm_job_index` because it does not indicate the position of the job in the job table.
 
@@ -119,6 +117,15 @@ The `OMMConditioner` item allows for dispensing seed rewards (specific to Rousse
 
 
 ## The `omm` Python object
+
+The `omm` object is added to the Python workspace automatically when an experiment is executed by an entry point; in this case the `omm.connected` property is `True`. Otherwise, the `omm` object is added to the workspace during the prepare phase of the first OMM plug-in in the experiment; in this case, the `omm.connected` property is `False`. Therefore, if you want to use the `omm` object in an `inline_script`, the safest way to do this is to check whether it exists and is connected, like so:
+
+```python
+if 'omm' in globals() and omm.connected:
+    print('Connected to an OMM server')
+else:
+    print('Not connected to an OMM server')
+```
 
 <span class="ClassDoc YAMLDoc" id="omm" markdown="1">
 
@@ -193,6 +200,17 @@ The identifier of the currently announced participant.
 
 [omm.current_participant]: #omm-current_participant
 [current_participant]: #omm-current_participant
+
+<span class="PropertyDoc YAMLDoc" id="omm-current_participant_name" markdown="1">
+
+## property __omm.current_participant_name__
+
+The name of the currently announced participant.
+
+</span>
+
+[omm.current_participant_name]: #omm-current_participant_name
+[current_participant_name]: #omm-current_participant_name
 
 <span class="PropertyDoc YAMLDoc" id="omm-current_study" markdown="1">
 
@@ -414,7 +432,6 @@ __Arguments:__
 </span>
 
 [omm]: #omm
-
 
 ## License
 
