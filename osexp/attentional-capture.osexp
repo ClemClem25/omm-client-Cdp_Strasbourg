@@ -201,11 +201,9 @@ define inline_script get_session_data
 	___prepare__
 	import random
 	
-	try:
-	    omm
-	except NameError:
-	    print('Testing!')
-	else:
+	# Check if the omm object exists, and if so whether it is connected to a
+	# server.
+	if 'omm' in globals() and omm.connected:
 	    session_data = omm.generic_session_data  # retrieve session data from server
 	    print('session_data', session_data)
 	    # If there is no session data yet, this means that we are starting a new
@@ -222,9 +220,12 @@ define inline_script get_session_data
 	    else:
 	        jobs_todo, jobs_done = session_data
 	    var.current_job = jobs_todo[0]
-	    print('current', var.current_job)
-	    print('todo', jobs_todo)
-	    print('done', jobs_done)
+	    print('participant: {} ({})'.format(omm.current_participant_name, omm.current_participant))
+	    print('current job:', var.current_job)
+	    print('jobs todo:', jobs_todo)
+	    print('jobs done:', jobs_done)
+	else:
+	    print('Not connected to OMM server')
 	__end__
 
 define sketchpad green_fixdot
@@ -273,7 +274,7 @@ define inline_script repeat_practice_if_necessary
 	PRACTICE_LENGTH = 4
 	MIN_ACC = .75
 	
-	if omm.connected:
+	if 'omm' in globals() and omm.connected:
 	    # Remember that the current job is now done, and whether the response was correct
 	    jobs_done.append((var.current_job, var.correct))
 	    # If we've done all practice trials, check if the accuracy was high enough
