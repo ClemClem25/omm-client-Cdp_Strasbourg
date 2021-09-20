@@ -183,10 +183,12 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             raise NoJobsForParticipant()
         self._participant = participant
         self._study = json['id']
+        self._participant_name = json['name']
         self._job_count = json['jobs_count']
         # The participant metadata is optional, and is None if no metadata has
         # been specified.
         metadata = json['participants'][0]['meta']
+        self._participant_name = json['participants'][0]['name']
         if metadata is None:
             self._participant_metadata = {}
         else:

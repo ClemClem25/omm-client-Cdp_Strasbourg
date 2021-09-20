@@ -99,6 +99,7 @@ class BaseOpenMonkeyMind(object):
     def __init__(self):
         
         self._participant = None
+        self._participant_name = None
         self._experiment = None
         self._job_id = None
         self._study = None
@@ -114,6 +115,16 @@ class BaseOpenMonkeyMind(object):
         """
         
         return self._participant
+    
+    @property
+    def current_participant_name(self):
+        
+        """
+        name: current_participant_name
+        desc: The name of the currently announced participant.
+        """
+        
+        return self._participant_name
     
     @property
     def participant_metadata(self):
