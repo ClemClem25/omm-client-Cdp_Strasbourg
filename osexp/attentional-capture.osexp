@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.10
+OpenSesame: 3.3.11a2
 Platform: posix
 Title: Attentional capture
 ---
@@ -269,6 +269,7 @@ define sketchpad red_fixdot
 define inline_script repeat_practice_if_necessary
 	set description "Executes Python code"
 	___run__
+	from openmonkeymind import Job
 	import statistics
 	
 	PRACTICE_LENGTH = 4
@@ -282,8 +283,10 @@ define inline_script repeat_practice_if_necessary
 	        acc = statistics.mean(job_correct for job_index, job_correct in jobs_done)
 	        print('accuracy: {}'.format(acc))
 	        # If the accuracy was too low, we re-add all done jobs to the todo list and
-	        # clear the list of done jobs
+	        # clear the list of done jobs. We also reset all the Job states to pending,
+	        # otherwise the announce will crash with 'No jobs available'.
 	        if acc < MIN_ACC:
+	            omm.set_job_states(1, omm.job_count + 1, Job.PENDING)
 	            jobs_todo += [job_index for job_index, job_correct in jobs_done]
 	            jobs_done = []
 	            items['practice_repeat'].run()
