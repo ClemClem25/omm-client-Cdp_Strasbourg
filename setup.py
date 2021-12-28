@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='opensesame-extension-omm',
-    version='0.5.0',
+    version='0.5.1',
     description='OpenMonkeyMind plugins and extension for OpenSesame',
     author='Sebastiaan Mathot',
     author_email='s.mathot@cogsci.nl',
