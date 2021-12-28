@@ -16,7 +16,7 @@
     {
       "label": "Serial port",
       "name": "line_edit_serial_port",
-      "info": "For SeedDispenser",
+      "info": "For RFID reader",
       "type": "line_edit",
       "var": "serial_port"
     },
