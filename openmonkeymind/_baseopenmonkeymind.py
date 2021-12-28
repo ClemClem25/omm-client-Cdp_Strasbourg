@@ -363,7 +363,7 @@ class BaseOpenMonkeyMind(object):
     def generic_participant_data(self):
         
         """
-        name: generic_study_data
+        name: generic_participant_data
         desc: |
             General-purpose data that is specific to the current participant,
             but shared across all studies. The data can be any object that can
@@ -382,7 +382,7 @@ class BaseOpenMonkeyMind(object):
     def generic_session_data(self):
         
         """
-        name: generic_study_data
+        name: generic_session_data
         desc: |
             General-purpose data that is specific to the current participant
             and study. The data can be any object that can be serialized by
