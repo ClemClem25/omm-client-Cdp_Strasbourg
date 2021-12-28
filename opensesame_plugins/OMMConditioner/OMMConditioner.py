@@ -14,6 +14,7 @@ class OMMConditioner(Item):
     def reset(self):
 
         self.var.conditioner = u'Dummy'
+        self.var.fallback_conditioner = u'Dummy'
         self.var.serial_port = 'COM4'
         self.var.reward = 'yes'
         self.var.sound = 'do nothing'
@@ -28,14 +29,27 @@ class OMMConditioner(Item):
             self._conditioner = self.python_workspace['omm_conditioner']
             oslogger.info('reusing conditioner')
             return
-        oslogger.info('initializing conditioner')
+        oslogger.info('initializing conditioner: {}'.format(
+            self.var.conditioner))
         cls = getattr(conditioners, self.var.conditioner)
-        self._conditioner = cls(
-            experiment=self.experiment,
-            port=self.var.serial_port,
-            motor_n_pulses=self.var.motor_n_pulses,
-            motor_pause=self.var.motor_pause
-        )
+        try:
+            self._conditioner = cls(
+                experiment=self.experiment,
+                port=self.var.serial_port,
+                motor_n_pulses=self.var.motor_n_pulses,
+                motor_pause=self.var.motor_pause
+            )
+        except Exception as e:
+            oslogger.info(
+                'failed to initialize ({}), falling back to: {}'.format(
+                    e, self.var.fallback_conditioner))
+            cls = getattr(conditioners, self.var.fallback_conditioner)
+            self._conditioner = cls(
+                experiment=self.experiment,
+                port=self.var.serial_port,
+                motor_n_pulses=self.var.motor_n_pulses,
+                motor_pause=self.var.motor_pause
+            )
         self.python_workspace['omm_conditioner'] = self._conditioner
         self.experiment.cleanup_functions.append(self._close_conditioner)
         
