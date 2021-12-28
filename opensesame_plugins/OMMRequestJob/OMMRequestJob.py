@@ -23,7 +23,7 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
     
     def reset(self):
         
-        self.var.jonb_index = ''
+        self.var.job_index = ''
         InlineScript.reset(self)
         BaseOMMPlugin.reset(self)
         
