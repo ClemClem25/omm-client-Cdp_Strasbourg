@@ -10,7 +10,7 @@ OpenMonkeyMind (OMM) allows OpenSesame experiments to be managed on a central se
 
 ## Credits
 
-© 2020 - 2021:
+© 2020 - 2022:
 
 - Sebastiaan Mathôt (@smathot), University of Groningen, The Netherlands
 - Daniel Schreij  (@dschreij)
@@ -120,12 +120,12 @@ The `OMMConditioner` item allows for dispensing seed rewards (specific to Rousse
 
 The `omm` object is added to the Python workspace automatically when an experiment is executed by an entry point; in this case the `omm.connected` property is `True`. Otherwise, the `omm` object is added to the workspace during the prepare phase of the first OMM plug-in in the experiment; in this case, the `omm.connected` property is `False`. Therefore, if you want to use the `omm` object in an `inline_script`, the safest way to do this is to check whether it exists and is connected, like so:
 
-```python
+~~~python
 if 'omm' in globals() and omm.connected:
     print('Connected to an OMM server')
 else:
     print('Not connected to an OMM server')
-```
+~~~
 
 <span class="ClassDoc YAMLDoc" id="omm" markdown="1">
 
@@ -241,9 +241,9 @@ __Arguments:__
 [omm.delete_jobs]: #omm-delete_jobs
 [delete_jobs]: #omm-delete_jobs
 
-<span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
+<span class="PropertyDoc YAMLDoc" id="omm-generic_participant_data" markdown="1">
 
-## property __omm.generic_study_data__
+## property __omm.generic_participant_data__
 
 General-purpose data that is specific to the current participant,
 but shared across all studies. The data can be any object that can
@@ -252,12 +252,12 @@ be serialized by JSON. If no data has been set, it has the value
 
 </span>
 
-[omm.generic_study_data]: #omm-generic_study_data
-[generic_study_data]: #omm-generic_study_data
+[omm.generic_participant_data]: #omm-generic_participant_data
+[generic_participant_data]: #omm-generic_participant_data
 
-<span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
+<span class="PropertyDoc YAMLDoc" id="omm-generic_session_data" markdown="1">
 
-## property __omm.generic_study_data__
+## property __omm.generic_session_data__
 
 General-purpose data that is specific to the current participant
 and study. The data can be any object that can be serialized by
@@ -265,8 +265,8 @@ JSON. If no data has been set, it has the value `None`.
 
 </span>
 
-[omm.generic_study_data]: #omm-generic_study_data
-[generic_study_data]: #omm-generic_study_data
+[omm.generic_session_data]: #omm-generic_session_data
+[generic_session_data]: #omm-generic_session_data
 
 <span class="PropertyDoc YAMLDoc" id="omm-generic_study_data" markdown="1">
 
@@ -432,6 +432,8 @@ __Arguments:__
 </span>
 
 [omm]: #omm
+
+
 
 ## License
 
