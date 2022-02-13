@@ -61,24 +61,32 @@ class OMMConditioner(Item):
     def prepare(self):
         
         self._init_conditioner()
+        self.experiment.var.omm_conditioner_action = ''
         
     def run(self):
 
         self.set_item_onset()
+        actions = []
         if self.var.reward == 'yes':
             self._conditioner.reward()
+            actions.append('reward')
         if self.var.sound == 'do nothing':
-            return
-        if self.var.sound == 'left':
+            pass
+        elif self.var.sound == 'left':
+            actions.append('sound_left')
             self._conditioner.sound_left()
         elif self.var.sound == 'right':
+            actions.append('sound_right')
             self._conditioner.sound_right()
         elif self.var.sound == 'both':
+            actions.append('sound_both')
             self._conditioner.sound_both()
         elif self.var.sound == 'off':
+            actions.append('sound_off')
             self._conditioner.sound_off()
         else:
             raise ValueError('invalid sound value: {}'.format(self.var.sound))
+        self.experiment.var.omm_conditioner_action = '+'.join(actions)
 
 
 class qtOMMConditioner(OMMConditioner, QtAutoPlugin):

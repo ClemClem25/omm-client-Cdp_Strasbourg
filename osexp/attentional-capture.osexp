@@ -253,6 +253,7 @@ define logger logger
 	log response
 	log response_time
 	log n_jobs_done
+	log omm_conditioner_action
 
 define feedback practice_done
 	set reset_variables yes
@@ -384,6 +385,6 @@ define sequence trial_sequence
 	run keyboard_response always
 	run green_fixdot "[correct] = 1"
 	run red_fixdot "[correct] = 0"
-	run OMMConditioner always
+	run OMMConditioner "[correct] = 1"
 	run logger always
 
