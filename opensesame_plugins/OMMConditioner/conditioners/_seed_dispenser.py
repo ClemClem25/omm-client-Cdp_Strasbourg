@@ -30,7 +30,7 @@ class SeedDispenser(BaseConditioner):
         super(SeedDispenser, self).__init__(**kwargs)
         self._port = kwargs.get('port', DEFAULT_PORT)
         self._motor_n_pulses = kwargs.get(
-            'motor_n_pulse',
+            'motor_n_pulses',
             DEFAULT_MOTOR_N_PULSES
         )
         self._motor_pause = kwargs.get(
