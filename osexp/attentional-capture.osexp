@@ -5,7 +5,7 @@ Citation: 'Theeuwes, J. (1992). Perceptual selectivity for color and form. *Perc
 
   '
 Description: An attentional capture experiment, loosely based on Theeuwes (1992)
-OpenSesame: 3.3.11a3
+OpenSesame: 3.3.11
 Platform: posix
 Title: Attentional capture
 ---
@@ -55,6 +55,7 @@ define OMMConditioner OMMConditioner
 
 define OMMRequestJob OMMRequestJob
 	set test_loop test_loop
+	set overwrite no
 	set omm_server "127.0.0.1"
 	set omm_port 3000
 	set omm_api 1
@@ -214,12 +215,14 @@ define inline_script get_session_data
 	        jobs_todo = list(range(1, omm.job_count + 1))
 	        random.shuffle(jobs_todo)
 	        jobs_done = []
+	        var.n_jobs_done = 0
 	    # Otherwise unpack the session data, which is a tuple consisting of a list
 	    # of job indices that are still to be done, and a list of (job_index, correct)
 	    # tuples that indicate which jobs have already been done, and whether the
 	    # associated response was correct.
 	    else:
-	        jobs_todo, jobs_done = session_data
+	        jobs_todo, jobs_done, var.n_jobs_done = session_data
+	    var.n_jobs_done += 1
 	    var.current_job = jobs_todo[0]
 	    print('participant: {} ({})'.format(omm.current_participant_name, omm.current_participant))
 	    print('current job:', var.current_job)
@@ -249,6 +252,7 @@ define logger logger
 	log distractor
 	log response
 	log response_time
+	log n_jobs_done
 
 define feedback practice_done
 	set reset_variables yes
@@ -293,7 +297,8 @@ define inline_script repeat_practice_if_necessary
 	            items['practice_repeat'].run()
 	        else:
 	            items['practice_done'].run()
-	    omm.generic_session_data = jobs_todo[1:], jobs_done  # update the session data on the server
+	    omm.generic_session_data = jobs_todo[1:], jobs_done, var.n_jobs_done  # update the session data on the server
+	    
 	__end__
 	set _prepare ""
 
