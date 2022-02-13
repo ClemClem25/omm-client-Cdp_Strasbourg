@@ -24,6 +24,7 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
     def reset(self):
         
         self.var.job_index = ''
+        self.var.overwrite = 'no'
         InlineScript.reset(self)
         BaseOMMPlugin.reset(self)
         
@@ -73,6 +74,9 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
         
     def _set_variable(self, key, val):
         
+        if key in self.experiment.var and self.var.overwrite == 'no':
+            oslogger.warning('ignoring existing variable: {}'.format(key))
+            return
         if key in IGNORE_KEYS:
             return
         if key == '_run':

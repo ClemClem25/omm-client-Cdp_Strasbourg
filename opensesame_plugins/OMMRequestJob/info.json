@@ -15,6 +15,13 @@
       "type": "line_edit",
       "info": "Leave empty to select next pending job",
       "var": "job_index"
+    },
+    {
+      "label": "Overwrite",
+      "name": "checkbox_overwrite_existing",
+      "type": "checkbox",
+      "info": "Overwrite values of existing variables",
+      "var": "overwrite"
     }
   ]
 }
