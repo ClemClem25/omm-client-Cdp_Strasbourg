@@ -26,6 +26,15 @@
       "info": "To store participant identifier",
       "type": "line_edit",
       "var": "participant_variable"
+    },
+    {
+      "label": "Minimum repititions",
+      "name": "spinbox_min_rep",
+      "info": "The number of times the RFID needs to be sucessfully read",
+      "type": "spinbox",
+      "var": "min_rep",
+      "min_val": 1,
+      "max_val": 1000
     }
   ]
 }

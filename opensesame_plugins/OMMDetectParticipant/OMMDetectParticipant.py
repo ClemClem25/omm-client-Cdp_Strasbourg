@@ -10,8 +10,6 @@ from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
 RFID_LENGTH = 18    # The number of bytes of an RFID
 RFID_SEP = b'\r'    # The byte that separates RFIDs in the buffer
-MIN_REP = 1         # The minimum number of RFIDs that we want to read, in case
-                    # we want to double-check.
 
 
 class OMMDetectParticipant(Item):
@@ -21,6 +19,7 @@ class OMMDetectParticipant(Item):
         self.var.detector = 'form'
         self.var.serial_port = 'COM3'
         self.var.participant_variable = 'participant'
+        self.var.min_rep = 1
         
     def _prepare_form(self):
         
@@ -102,7 +101,7 @@ class OMMDetectParticipant(Item):
                 continue
             # If we have the minimum of repetitions of the RFID, then we are
             # satisfied and return the first RFID.
-            if len(rfids) >= MIN_REP:
+            if len(rfids) >= self.var.min_rep:
                 rfid = safe_decode(rfids[0])
                 break
         oslogger.warning('rfid detected: {}'.format(rfid))
