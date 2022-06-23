@@ -51,6 +51,8 @@ class OMMAnnounce(BaseOMMPlugin, Item):
             oslogger.warning(e)
             exp = self._fallback_experiment()
             self._openmonkeymind._participant = self.var.omm_participant[1:-1]
+            self._openmonkeymind._participant_name = 'unknown'
+            self._openmonkeymind._participant_metadata = {}
         item_stack.item_stack_singleton.clear = lambda: None
         exp.init_display = lambda: None
         exp.end = lambda: exp.cleanup()  # only call cleanup functions
