@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.3.8
+OpenSesame: 4.0.24
 Platform: posix
 ---
 set width {omm_width}
@@ -34,7 +34,7 @@ set background black
 define OmmAnnounce announce
 	set omm_server "{omm_server}"
 	set omm_port "{omm_port}"
-	set omm_participant "[participant]"
+	set omm_participant "{{participant}}"
 	set omm_local_logfile "{omm_local_logfile}"
 	set omm_fallback_experiment "{omm_fallback_experiment}"
 	set omm_api 1
@@ -48,7 +48,7 @@ define repeat_cycle be_infinite
 	set condition always
 
 define OmmDetectParticipant detect
-	set serial_port "[=var.get('omm_rfid_port', 'COM3')]"
+	set serial_port "{{var.get('omm_rfid_port', 'COM3')}}"
 	set participant_variable participant
 	set detector "{omm_detector}"
 

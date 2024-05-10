@@ -1,5 +1,5 @@
 from libopensesame.py3compat import *
-import conditioners
+from . import conditioners
 from libopensesame.item import Item
 from libopensesame.oslogging import oslogger
 

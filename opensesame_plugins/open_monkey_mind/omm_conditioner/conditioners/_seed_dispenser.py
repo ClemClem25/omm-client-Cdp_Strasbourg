@@ -1,7 +1,5 @@
-# coding=utf-8
-
 from libopensesame.py3compat import *
-from conditioners._base_conditioner import BaseConditioner
+from ._base_conditioner import BaseConditioner
 import serial
 
 DEFAULT_PORT = 'COM4'
