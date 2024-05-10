@@ -1,20 +1,15 @@
-# coding=utf-8
-
 from libopensesame.py3compat import *
 import conditioners
 from libopensesame.item import Item
 from libopensesame.oslogging import oslogger
-from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
 
-class OMMConditioner(Item):
-
-    description = u'Conditioner plugin for Open Monkey Mind'
+class OmmConditioner(Item):
 
     def reset(self):
 
-        self.var.conditioner = u'Dummy'
-        self.var.fallback_conditioner = u'Dummy'
+        self.var.conditioner = 'Dummy'
+        self.var.fallback_conditioner = 'Dummy'
         self.var.serial_port = 'COM4'
         self.var.reward = 'yes'
         self.var.sound = 'do nothing'
@@ -85,11 +80,3 @@ class OMMConditioner(Item):
         else:
             raise ValueError('invalid sound value: {}'.format(self.var.sound))
         self.experiment.var.omm_conditioner_action = '+'.join(actions)
-
-
-class qtOMMConditioner(OMMConditioner, QtAutoPlugin):
-
-    def __init__(self, name, experiment, script=None):
-
-        OMMConditioner.__init__(self, name, experiment, script)
-        QtAutoPlugin.__init__(self, __file__)

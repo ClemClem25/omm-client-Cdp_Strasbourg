@@ -31,7 +31,7 @@ set canvas_backend {canvas_backend}
 set background black
 {omm_yaml_vars}
 
-define OMMAnnounce announce
+define OmmAnnounce announce
 	set omm_server "{omm_server}"
 	set omm_port "{omm_port}"
 	set omm_participant "[participant]"
@@ -47,7 +47,7 @@ define repeat_cycle be_infinite
 	set description "Optionally repeat a cycle from a loop"
 	set condition always
 
-define OMMDetectParticipant detect
+define OmmDetectParticipant detect
 	set serial_port "[=var.get('omm_rfid_port', 'COM3')]"
 	set participant_variable participant
 	set detector "{omm_detector}"

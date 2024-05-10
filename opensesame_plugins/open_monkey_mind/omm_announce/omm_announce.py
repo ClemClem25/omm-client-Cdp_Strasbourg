@@ -6,9 +6,8 @@ import sys
 import yaml
 import requests
 from libopensesame.item import Item
-from libopensesame.experiment import experiment
+from libopensesame.experiment import Experiment
 from libopensesame.oslogging import oslogger
-from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 from openmonkeymind import (
     BaseOMMPlugin,
     NoJobsForParticipant,
@@ -17,9 +16,7 @@ from openmonkeymind import (
 from libopensesame import item_stack
 
 
-class OMMAnnounce(BaseOMMPlugin, Item):
-
-    description = u'Announce-participant plugin for Open Monkey Mind'
+class OmmAnnounce(BaseOMMPlugin, Item):
 
     def reset(self):
 
@@ -105,12 +102,4 @@ class OMMAnnounce(BaseOMMPlugin, Item):
             raise FileNotFoundError('no fallback experiment: {}'.format(
                 self.var.omm_fallback_experiment
             ))
-        return experiment(string=self.var.omm_fallback_experiment)
-
-
-class qtOMMAnnounce(OMMAnnounce, QtAutoPlugin):
-
-    def __init__(self, name, experiment, script=None):
-
-        OMMAnnounce.__init__(self, name, experiment, script)
-        QtAutoPlugin.__init__(self, __file__)
+        return Experiment(string=self.var.omm_fallback_experiment)

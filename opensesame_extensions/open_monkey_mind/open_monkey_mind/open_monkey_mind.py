@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from libopensesame.py3compat import *
 import os
 import tempfile
@@ -13,7 +11,7 @@ from libqtopensesame.misc.config import cfg
 from libqtopensesame.extensions import BaseExtension
 from libqtopensesame.misc.translate import translation_context
 from openmonkeymind import OpenMonkeyMind as OMM
-_ = translation_context(u'OpenMonkeyMind', category=u'extension')
+_ = translation_context('OpenMonkeyMind', category='extension')
 
 
 def server_ping(queue, server, port):
@@ -23,7 +21,7 @@ def server_ping(queue, server, port):
 
 class OpenMonkeyMind(BaseExtension):
     
-    preferences_ui = 'extensions.OpenMonkeyMind.openmonkeymind'
+    preferences_ui = 'extensions.open_monkey_mind.open_monkey_mind'
     
     def event_startup(self):
 

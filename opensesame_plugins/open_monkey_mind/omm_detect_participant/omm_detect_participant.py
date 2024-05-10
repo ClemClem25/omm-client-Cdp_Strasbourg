@@ -1,18 +1,15 @@
-# coding=utf-8
-
 import time
 from openexp.keyboard import Keyboard
 from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 from libopensesame import widgets
 from libopensesame.item import Item
-from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 
 RFID_LENGTH = 18    # The number of bytes of an RFID
 RFID_SEP = b'\r'    # The byte that separates RFIDs in the buffer
 
 
-class OMMDetectParticipant(Item):
+class OmmDetectParticipant(Item):
     
     def reset(self):
         
@@ -121,11 +118,3 @@ class OMMDetectParticipant(Item):
             self._prepare_form()
         else:
             raise ValueError("detector should be 'Dummy', 'Form' or 'RFID'")
-
-
-class qtOMMDetectParticipant(OMMDetectParticipant, QtAutoPlugin):
-
-    def __init__(self, name, experiment, script=None):
-
-        OMMDetectParticipant.__init__(self, name, experiment, script)
-        QtAutoPlugin.__init__(self, __file__)

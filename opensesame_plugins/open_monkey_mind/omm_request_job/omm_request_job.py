@@ -1,12 +1,9 @@
-# coding=utf-8
-
 import random
 from libopensesame.py3compat import *
 from libopensesame.item import Item
 from libopensesame.oslogging import oslogger
-from libopensesame.exceptions import osexception
+from libopensesame.exceptions import OSException
 from libopensesame.inline_script import inline_script as InlineScript
-from libqtopensesame.items.qtautoplugin import QtAutoPlugin
 from openmonkeymind import BaseOMMPlugin
 
 
@@ -17,9 +14,9 @@ IGNORE_KEYS = (
 )
 
 
-class OMMRequestJob(BaseOMMPlugin, InlineScript):
+class OmmRequestJob(BaseOMMPlugin, InlineScript):
 
-    description = u'Plugin to request a job for Open Monkey Mind'
+    description = 'Plugin to request a job for Open Monkey Mind'
     
     def reset(self):
         
@@ -85,23 +82,15 @@ class OMMRequestJob(BaseOMMPlugin, InlineScript):
         if key == '_prepare':
             self.var._prepare = val
             return
-        if isinstance(val, basestring) and val.startswith(u'='):
+        if isinstance(val, basestring) and val.startswith('='):
             try:
                 val = self.python_workspace._eval(val[1:])
             except Exception as e:
-                raise osexception(
-                    u'Error evaluating Python expression in job variable',
+                raise OSException(
+                    'Error evaluating Python expression in job variable',
                     line_offset=0,
                     item=self.name,
-                    phase=u'prepare',
+                    phase='prepare',
                     exception=e
                 )
         self.experiment.var.set(key, val)
-
-
-class qtOMMRequestJob(OMMRequestJob, QtAutoPlugin):
-
-    def __init__(self, name, experiment, script=None):
-
-        OMMRequestJob.__init__(self, name, experiment, script)
-        QtAutoPlugin.__init__(self, __file__)
