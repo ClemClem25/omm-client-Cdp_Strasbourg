@@ -51,3 +51,7 @@ controls = [
     "var": "omm_yaml_data"
   }
 ]
+
+
+def supports(exp):
+    return exp.var.canvas_backend != 'osweb'
