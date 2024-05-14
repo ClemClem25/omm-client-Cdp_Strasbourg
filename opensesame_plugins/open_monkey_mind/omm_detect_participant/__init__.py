@@ -1,6 +1,7 @@
 """A plugin to detect participants based on an RFID chip"""
 
 category = "OMM Client"
+aliases = ['OMMDetectParticipant']
 controls = [
   {
     "label": "detector",

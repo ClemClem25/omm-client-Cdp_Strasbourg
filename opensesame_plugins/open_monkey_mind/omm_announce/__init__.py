@@ -1,6 +1,7 @@
 """A plugin for announcing participants"""
 
 category = "OMM Client"
+aliases = ['OMMAnnounce']
 controls = [
   {
     "label": "Participant",

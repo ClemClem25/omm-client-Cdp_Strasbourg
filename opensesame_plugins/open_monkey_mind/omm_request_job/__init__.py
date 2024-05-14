@@ -1,6 +1,7 @@
 """A plugin for requesting jobs"""
 
 category = "OMM Client"
+aliases = ['OMMRequestJob']
 controls = [
   {
     "label": "Loop for testing",

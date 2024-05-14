@@ -1,6 +1,7 @@
 """A plugin for dispensing rewards"""
 
 category = "OMM Client"
+aliases = ['OMMConditioner']
 controls = [
   {
     "label": "conditioner",
