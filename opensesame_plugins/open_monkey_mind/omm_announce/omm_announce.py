@@ -20,7 +20,7 @@ class OmmAnnounce(BaseOMMPlugin, Item):
 
     def reset(self):
 
-        self.var.omm_participant = '[participant]'
+        self.var.omm_participant = '{participant}'
         self.var.omm_server = '127.0.0.1'
         self.var.omm_port = 3000
         self.var.omm_api = 1
@@ -37,9 +37,10 @@ class OmmAnnounce(BaseOMMPlugin, Item):
         sys.modules['openexp._log.omm'] = _omm_log_backend
         # Get the experiment and patch it so that re-uses the environment of
         # the current experiment, i.e. it doesn't create its own window etc.
+        detected_participant_id = self.var.omm_participant[1:-1]
         try:
             # Strip the / characters from the participant id
-            exp = self._openmonkeymind.announce(self.var.omm_participant[1:-1])
+            exp = self._openmonkeymind.announce(detected_participant_id)
         except (
             ParticipantNotFound,
             NoJobsForParticipant,
@@ -47,7 +48,7 @@ class OmmAnnounce(BaseOMMPlugin, Item):
         ) as e:
             oslogger.warning(e)
             exp = self._fallback_experiment()
-            self._openmonkeymind._participant = self.var.omm_participant[1:-1]
+            self._openmonkeymind._participant = detected_participant_id
             self._openmonkeymind._participant_name = 'unknown'
             self._openmonkeymind._participant_metadata = {}
         item_stack.item_stack_singleton.clear = lambda: None
@@ -56,6 +57,7 @@ class OmmAnnounce(BaseOMMPlugin, Item):
         exp.window = self.experiment.window
         exp.var.width = self.experiment.var.width
         exp.var.height = self.experiment.var.height
+        exp.var.detected_participant_id = detected_participant_id
         exp.logfile = self.var.omm_local_logfile
         exp.python_workspace['win'] = self.experiment.window
         exp.python_workspace['omm'] = self._openmonkeymind
