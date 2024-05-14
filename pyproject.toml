@@ -7,7 +7,8 @@ readme = "readme.md"
 license = "COPYING"
 packages = [
     {include = "opensesame_extensions"},
-    {include = "opensesame_plugins"}
+    {include = "opensesame_plugins"},
+    {include = "openmonkeymind"}
 ]
 homepage = "https://github.com/open-cogsci/omm-client"
 repository = "https://github.com/open-cogsci/omm-client"
