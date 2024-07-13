@@ -53,7 +53,7 @@ define sketchpad fixdot
 	set duration keypress
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Condition: [condition]<br /><br /><br />Press any key" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Condition: {condition}<br /><br /><br />Press any key" x=0 y=0 z_index=0
 
 define logger logger
 	set description "Logs experimental data"
