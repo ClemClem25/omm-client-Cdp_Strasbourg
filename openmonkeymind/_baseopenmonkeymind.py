@@ -117,6 +117,18 @@ class BaseOpenMonkeyMind(object):
         return self._participant
     
     @property
+    def current_participant_changed(self):    
+        """
+        name: current_participant_changed
+        desc: |
+            Indicates whether a new participant identifier is available. If
+            this is true, the current participant is not automatically changed.
+            Rather, this property allows the system to check whether a new
+            participant would be identified if we would detect again.
+        """
+        return False
+    
+    @property
     def current_participant_name(self):
         
         """

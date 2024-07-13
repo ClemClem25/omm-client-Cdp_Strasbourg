@@ -198,6 +198,17 @@ The identifier of the currently announced participant.
 
 </span>
 
+<span class="PropertyDoc YAMLDoc" id="omm-current_participant_changed" markdown="1">
+
+## property __omm.current_participant_changed__
+
+Indicates whether a new participant identifier is available. If
+this is true, the current participant is not automatically changed.
+Rather, this property allows the system to check whether a new
+participant would be identified if we would detect again.
+
+</span>
+
 [omm.current_participant]: #omm-current_participant
 [current_participant]: #omm-current_participant
 

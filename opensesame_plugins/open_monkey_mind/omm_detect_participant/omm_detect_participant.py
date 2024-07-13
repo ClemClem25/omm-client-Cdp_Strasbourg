@@ -9,6 +9,52 @@ RFID_LENGTH = 18    # The number of bytes of an RFID
 RFID_SEP = b'\r'    # The byte that separates RFIDs in the buffer
 
 
+def _rfid_monitor(queue, reset_event, stop_event, port, min_rep=3):
+    
+    import serial
+    print('starting RFID monitor process')
+    s = serial.Serial(port, timeout=0.01)
+    s.flushInput()
+    buffer = b''
+    last_rfid = None
+    while not stop_event.is_set():
+        # When a reset event comes in, we should again accept any new RFID, 
+        # which means flushing the input and forgetting the current buffer and
+        # last RFID
+        if reset_event.is_set():
+            print('resetting last rfid')
+            reset_event.clear()
+            s.flushInput()
+            buffer = b''
+            last_rfid = None
+        # Read at most RFID_LENGTH bytes from the serial port. This can
+        # also result in fewer bytes.
+        buffer += s.read(RFID_LENGTH)
+        # Split the buffer based on the RFID separator byte, and keep only
+        # those elements that have the expected length, in case the buffer
+        # contains some fragments of RFIDs.
+        rfids = [
+            rfid for rfid in buffer.split(RFID_SEP)
+            if len(rfid) == RFID_LENGTH
+        ]
+        # If there more than one different RFIDs, then something went wrong
+        # and we reset the buffer.
+        if len(set(rfids)) > 1:
+            print('inconsistent rfids')
+            buffer = b''
+            continue
+        # If we have the minimum of repetitions of the RFID, then we are
+        # satisfied and take the first RFID. If this RFID is different from
+        # the last RFID, we put it onto the queue.
+        if len(rfids) >= min_rep:
+            rfid = rfids[0].decode()
+            if rfid != last_rfid:
+                print('rfid detected: {}'.format(rfid))
+                queue.put(rfid)
+                last_rfid = rfid
+    s.close()
+
+
 class OmmDetectParticipant(Item):
     
     def reset(self):
@@ -64,45 +110,38 @@ class OmmDetectParticipant(Item):
 
     def _prepare_rfid(self):
         
+        if not hasattr(self.experiment, '_omm_participant_process'):
+            oslogger.info('starting RFID monitor process')
+            import multiprocessing
+            import queue
+            self.experiment._omm_participant_queue = multiprocessing.Queue()
+            self.experiment._omm_participant_reset_event = multiprocessing.Event()
+            self.experiment._omm_participant_stop_event = multiprocessing.Event()
+            self.experiment._omm_participant_process = multiprocessing.Process(
+                target=_rfid_monitor,
+                args=(self.experiment._omm_participant_queue,
+                      self.experiment._omm_participant_reset_event,
+                      self.experiment._omm_participant_stop_event,
+                      self.var.serial_port,
+                      self.var.min_rep)
+            )
+            self.experiment._omm_participant_process.start()
         self.run = self._run_rfid
     
     def _run_rfid(self):
-        
-        import serial
-        
-        keyboard = Keyboard(self.experiment, timeout=0)
-        s = serial.Serial(self.var.serial_port, timeout=0.01)
-        s.flushInput()
-        buffer = b''
-        while True:
-            # Also accept key presses as RFIDs for testing.
-            key, _ = keyboard.get_key()
-            if key:
-                rfid = key
-                break
-            # Read at most RFID_LENGTH bytes from the serial port. This can
-            # also result in fewer bytes.
-            buffer += s.read(RFID_LENGTH)
-            # Split the buffer based on the RFID separator byte, and keep only
-            # those elements that have the expected length, in case the buffer
-            # contains some fragments of RFIDs.
-            rfids = [
-                rfid for rfid in buffer.split(RFID_SEP)
-                if len(rfid) == RFID_LENGTH
-            ]
-            # If there more than one different RFIDs, then something went wrong
-            # and we reset the buffer.
-            if len(set(rfids)) > 1:
-                oslogger.warning('inconsistent rfids')
-                buffer = b''
-                continue
-            # If we have the minimum of repetitions of the RFID, then we are
-            # satisfied and return the first RFID.
-            if len(rfids) >= self.var.min_rep:
-                rfid = safe_decode(rfids[0])
-                break
-        oslogger.warning('rfid detected: {}'.format(rfid))
-        s.close()
+
+        # Reset the monitor so that it accepts any RFID, not only new ones
+        self.experiment._omm_participant_reset_event.set()
+        # Eat up any pending RFIDs on the queue
+        while not self.experiment._omm_participant_queue.empty():
+            try:
+                self.experiment._omm_participant_queue.get_nowait()
+            except queue.Empty:
+                break        
+        # Wait for a new RFID
+        while self.experiment._omm_participant_queue.empty():
+            time.sleep(.01)
+        rfid = self.experiment._omm_participant_queue.get()
         self.experiment.var.set(
             self.var.participant_variable,
             '/{}/'.format(rfid)  # Flank with / to make sure it's a string

@@ -368,3 +368,9 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
             },
             FailedToSetGenericSessionData
         )
+
+    @property
+    def current_participant_changed(self):    
+        if not hasattr(self._experiment, '_omm_participant_process'):
+            return False
+        return not self._experiment._omm_participant_queue.empty()
