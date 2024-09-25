@@ -126,6 +126,7 @@ class OmmDetectParticipant(Item):
                       self.var.min_rep)
             )
             self.experiment._omm_participant_process.start()
+            self.experiment.cleanup_functions.append(self._close_rfid)
         self.run = self._run_rfid
     
     def _run_rfid(self):
@@ -146,6 +147,12 @@ class OmmDetectParticipant(Item):
             self.var.participant_variable,
             '/{}/'.format(rfid)  # Flank with / to make sure it's a string
         )
+        
+    def _close_rfid(self):
+        # Stop the monitor process so the signal isn't blocked on the next 
+        # experiment
+        oslogger.info('stopping RFID monitor process')
+        self.experiment._omm_participant_stop_event.set()
     
     def prepare(self):
         
