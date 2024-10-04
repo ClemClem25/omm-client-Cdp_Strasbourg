@@ -45,7 +45,7 @@ class Job(BaseJob):
         # The pivot data can contain multiple entries, in case the job was
         # reset and done again. In this case, the field is a list, and we
         # get the last entry from the list.
-        if json['pivot']['data'] is not None:
+        if json['pivot'].get('data', None) is not None:
             pivot_data = json['pivot']['data']
             if isinstance(pivot_data, list):
                 pivot_data = pivot_data[-1]

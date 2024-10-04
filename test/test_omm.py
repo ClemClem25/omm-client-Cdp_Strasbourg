@@ -1,11 +1,14 @@
 # coding=utf-8
 
+import sys
+sys.path.insert(0, '.')
 from openmonkeymind import OpenMonkeyMind, Job
 from openmonkeymind._baseopenmonkeymind import BaseJob
 from libopensesame.experiment import experiment
 import sqlite3
 import os
-import sys
+
+PARTICIPANT = 'b'
 
 
 class DummyJob(BaseJob):
@@ -26,12 +29,12 @@ def init():
 
 def announce():
     
-    exp = omm.announce(os.environ['PARTICIPANT'])
+    exp = omm.announce(PARTICIPANT)
     assert(isinstance(exp, experiment))
     
     
-def check_jobs(ref_jobs):
-    
+def check_jobs(ref_jobs: list):
+    """Check that the jobs on the server match the reference jobs"""
     act_jobs = omm.get_jobs(1, len(ref_jobs))
     for ref_job, act_job in zip(ref_jobs, act_jobs):
         # We remove the _time and timestamp fields because they're 
@@ -44,8 +47,8 @@ def check_jobs(ref_jobs):
 
 def clear_jobs():
 
-    # There are two jobs two begin with, but due to the random seeding they
-    # sometimes have unpredictable values. So we delete them.
+    # There are two jobs two begin with, We delete them and check that then
+    # there are no jobs left.
     omm.delete_jobs(1, 3)
     check_jobs([])
     assert(omm.current_job is None)
@@ -68,7 +71,7 @@ def get_first_job():
     
     assert(omm.get_current_job_index() == 1)
     assert(omm.current_job is None)
-    cur_job = omm.request_current_job()
+    cur_job = omm.request_job()
     assert(omm.current_job == 3)
     ref_job = DummyJob(
         3,
@@ -101,7 +104,7 @@ def get_second_job():
     
     assert(omm.get_current_job_index() == 2)
     assert(omm.current_job is None)
-    cur_job = omm.request_current_job()
+    cur_job = omm.request_job()
     assert(omm.current_job == 4)
     ref_job = DummyJob(
         4,

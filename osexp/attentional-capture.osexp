@@ -43,7 +43,7 @@ set canvas_backend legacy
 set bidi no
 set background black
 
-define OMMConditioner OMMConditioner
+define omm_conditioner OMMConditioner
 	set sound "do nothing"
 	set serial_port COM4
 	set reward yes
@@ -53,7 +53,7 @@ define OMMConditioner OMMConditioner
 	set description "Conditioner plugin for Open Monkey Mind"
 	set conditioner SeedDispenser
 
-define OMMRequestJob OMMRequestJob
+define omm_request_job OMMRequestJob
 	set test_loop test_loop
 	set overwrite no
 	set omm_server "127.0.0.1"
@@ -387,4 +387,3 @@ define sequence trial_sequence
 	run red_fixdot "[correct] = 0"
 	run OMMConditioner "[correct] = 1"
 	run logger always
-
