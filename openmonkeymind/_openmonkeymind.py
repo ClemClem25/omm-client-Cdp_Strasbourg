@@ -42,17 +42,16 @@ class Job(BaseJob):
         if 'pivot' not in json:
             self._state = Job.STARTED
             return
-        # The pivot data can contain multiple entries, in case the job was
+        # The jobResults data can contain multiple entries, in case the job was
         # reset and done again. In this case, the field is a list, and we
         # get the last entry from the list.
-        if json['pivot'].get('data', None) is not None:
-            pivot_data = json['pivot']['data']
-            if isinstance(pivot_data, list):
-                pivot_data = pivot_data[-1]
-            # Copy the pivot table, except for those variables that already
-            # exist in the data, because we don't overwrite the variables that
-            # were explicitly set by the job.
-            for key, val in pivot_data.items():
+        job_results = json.get('jobResults', [])
+        if job_results:
+            job_data = job_results[-1].get('data', {})
+            # Copy the job results table, except for those variables that 
+            # already exist in the data, because we don't overwrite the 
+            # variables that were explicitly set by the job.
+            for key, val in job_data.items():
                 if key in self._data:
                     continue
                 self._data[key] = val

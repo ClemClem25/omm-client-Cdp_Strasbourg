@@ -149,7 +149,8 @@ def skip_to_second_job():
         state=DummyJob.STARTED,
         data={'distractor': 'present', 'correct': 0}
     )
-    del cur_job['timestamp']
+    if 'timestamp' in cur_job:
+        del cur_job['timestamp']
     if ref_job != cur_job:
         raise ValueError('{} != {}'.format(ref_job, cur_job))
 
