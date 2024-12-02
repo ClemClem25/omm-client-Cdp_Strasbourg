@@ -4,9 +4,15 @@ from libopensesame.py3compat import *
 from libopensesame.oslogging import oslogger
 from libopensesame import widgets
 from libopensesame.item import Item
+from openmonkeymind._exceptions import OMMException
 
 RFID_LENGTH = 18    # The number of bytes of an RFID
 RFID_SEP = b'\r'    # The byte that separates RFIDs in the buffer
+
+
+# A dummy class to signal that the RFID monitor crashed
+class RFIDMonitorProcessCrashed(OMMException):
+    pass
 
 
 def _rfid_monitor(queue, reset_event, stop_event, port, min_rep=3):
@@ -38,10 +44,12 @@ def _rfid_monitor(queue, reset_event, stop_event, port, min_rep=3):
             if len(rfid) == RFID_LENGTH
         ]
         # If there more than one different RFIDs, then something went wrong
-        # and we reset the buffer.
+        # and we reset the buffer, keeping only the last RFIDs (keeping 
+        # multiple if the buffer ends with multiple repetitions of the same
+        # RFID).
         if len(set(rfids)) > 1:
-            print('inconsistent rfids')
-            buffer = b''
+            print(f'inconsistent rfids, only keeping last rfids')
+            buffer = RFID_SEP.join([rfids[-1]] * rfids.count(rfids[-1]))
             continue
         # If we have the minimum of repetitions of the RFID, then we are
         # satisfied and take the first RFID. If this RFID is different from
@@ -128,6 +136,7 @@ class OmmDetectParticipant(Item):
             self.experiment._omm_participant_process.start()
             self.experiment.cleanup_functions.append(self._close_rfid)
         self.run = self._run_rfid
+        self._keyboard = Keyboard(self.experiment, timeout=0)
     
     def _run_rfid(self):
 
@@ -138,10 +147,22 @@ class OmmDetectParticipant(Item):
             try:
                 self.experiment._omm_participant_queue.get_nowait()
             except queue.Empty:
-                break        
-        # Wait for a new RFID
+                break
+        # Wait for a new RFID. While waiting, we make sure that the process
+        # is still alive, and we also poll the keyboard to allow for testing
+        # identifications with a key press
         while self.experiment._omm_participant_queue.empty():
             time.sleep(.01)
+            if not self.experiment._omm_participant_process.is_alive():
+                raise RFIDMonitorProcessCrashed()
+            key, timestamp = self._keyboard.get_key()
+            if key is not None:
+                oslogger.info('identifier by key: {}'.format(key))
+                self.experiment.var.set(
+                    self.var.participant_variable,
+                    '/{}/'.format(key)
+                )
+                return
         rfid = self.experiment._omm_participant_queue.get()
         self.experiment.var.set(
             self.var.participant_variable,

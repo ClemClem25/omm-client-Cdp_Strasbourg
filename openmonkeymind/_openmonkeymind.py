@@ -369,7 +369,9 @@ class OpenMonkeyMind(BaseOpenMonkeyMind):
         )
 
     @property
-    def current_participant_changed(self):    
+    def current_participant_changed(self):
         if not hasattr(self._experiment, '_omm_participant_process'):
+            oslogger.warning(
+                'experiment._omm_participant_process does not exist')
             return False
         return not self._experiment._omm_participant_queue.empty()

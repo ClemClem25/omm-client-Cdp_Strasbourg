@@ -61,6 +61,16 @@ class OmmAnnounce(BaseOMMPlugin, Item):
         exp.logfile = self.var.omm_local_logfile
         exp.python_workspace['win'] = self.experiment.window
         exp.python_workspace['omm'] = self._openmonkeymind
+        # These properties are used by the process that monitors RFID changes
+        if hasattr(self.experiment, '_omm_participant_process'):
+            oslogger.info('re-using experiment._omm_participant_process')
+            exp._omm_participant_process = \
+                self.experiment._omm_participant_process
+            exp._omm_participant_queue = self.experiment._omm_participant_queue
+            exp._omm_participant_reset_event = \
+                self.experiment._omm_participant_reset_event
+            exp._omm_participant_stop_event = \
+                self.experiment._omm_participant_stop_event
         # A few back-end-specific properties need to be copied to the
         # experiment.
         if self.experiment.var.canvas_backend == 'xpyriment':
