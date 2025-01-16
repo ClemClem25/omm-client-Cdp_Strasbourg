@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opensesame-extension-omm"
-version = "0.7.0-a3"
+version = "0.7.0"
 description = "OpenMonkeyMind plugins and extension for OpenSesame"
 authors = ["Sebastiaan Mathôt <s.mathot@cogsci.nl>"]
 readme = "readme.md"
