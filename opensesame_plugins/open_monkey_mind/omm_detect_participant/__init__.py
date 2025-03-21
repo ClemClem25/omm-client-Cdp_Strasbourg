@@ -15,11 +15,11 @@ controls = [
     "var": "detector"
   },
   {
-    "label": "Serial port",
-    "name": "line_edit_serial_port",
-    "info": "For RFID reader",
+    "label": "Serial ports",
+    "name": "line_edit_serial_ports",
+    "info": "For RFID readers (comma-separated, e.g. COM3,COM4)",
     "type": "line_edit",
-    "var": "serial_port"
+    "var": "serial_ports"
   },
   {
     "label": "Variable",
@@ -29,16 +29,15 @@ controls = [
     "var": "participant_variable"
   },
   {
-    "label": "Minimum repititions",
+    "label": "Minimum repetitions",
     "name": "spinbox_min_rep",
-    "info": "The number of times the RFID needs to be sucessfully read",
+    "info": "The number of times the RFID needs to be successfully read",
     "type": "spinbox",
     "var": "min_rep",
     "min_val": 1,
     "max_val": 1000
   }
 ]
-
 
 def supports(exp):
     return exp.var.canvas_backend != 'osweb'
