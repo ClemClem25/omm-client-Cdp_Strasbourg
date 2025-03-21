@@ -1,4 +1,5 @@
 import time
+from libopensesame.py3compat import *
 from openexp.keyboard import Keyboard
 from libopensesame.oslogging import oslogger
 from libopensesame import widgets
