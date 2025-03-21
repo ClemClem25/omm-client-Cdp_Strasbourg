@@ -7,17 +7,19 @@ from libopensesame.oslogging import oslogger
 class OmmConditioner(Item):
 
     def reset(self):
-
         self.var.conditioner = 'Dummy'
         self.var.fallback_conditioner = 'Dummy'
         self.var.serial_port = 'COM4'
         self.var.reward = 'yes'
+        self.var.juice = 'yes'
         self.var.sound = 'do nothing'
         self.var.motor_n_pulses = 5
         self.var.motor_pause = 200
+        self.var.start = 'S'
+        self.var.stop = 'T'
+        self.var.secondes = 1
         
     def _init_conditioner(self):
-        
         if hasattr(self, '_conditioner'):
             return
         if 'omm_conditioner' in self.python_workspace:
@@ -45,24 +47,33 @@ class OmmConditioner(Item):
         self.experiment.cleanup_functions.append(self._close_conditioner)
         
     def _close_conditioner(self):
-        
         oslogger.info('closing conditioner')
         self._conditioner.close()
         
     def prepare(self):
-        
         self._init_conditioner()
         self.experiment.var.omm_conditioner_action = ''
         
     def run(self):
-
         self.set_item_onset()
         actions = []
         if self.var.reward == 'yes':
             self._conditioner.motor_n_pulses = self.var.motor_n_pulses
             self._conditioner.motor_pause = self.var.motor_pause
+
             self._conditioner.reward()
             actions.append('reward')
+
+        if self.var.juice == 'yes':
+            print("nickel")
+            self._conditioner.start=self.var.start
+            self._conditioner.stop=self.var.stop
+            self._conditioner.duration=self.var.secondes
+
+            self._conditioner.secondes = self.var.secondes
+            self._conditioner.juice()
+            actions.append('juice')
+
         if self.var.sound == 'do nothing':
             pass
         elif self.var.sound == 'left':
@@ -79,4 +90,4 @@ class OmmConditioner(Item):
             self._conditioner.sound_off()
         else:
             raise ValueError('invalid sound value: {}'.format(self.var.sound))
-        self.experiment.var.omm_conditioner_action = '+'.join(actions)
+    
