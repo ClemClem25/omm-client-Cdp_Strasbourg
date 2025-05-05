@@ -9,18 +9,19 @@ from libopensesame import widgets
 from libopensesame.item import Item
 from openmonkeymind._exceptions import OMMException
 
+# Constants for RFID handling
 RFID_LENGTH = 18  # Number of bytes in a valid RFID
 RFID_SEP = b'\r'  # RFID separator in the buffer
 
-# Exception to indicate RFID process crash
+# Custom exception used to indicate that the RFID monitoring process has crashed
 class RFIDMonitorProcessCrashed(OMMException):
     pass
 
-
 def _rfid_monitor(queue, reset_event, stop_event, ports, min_rep=3):
     """
-    Modified to support multiple RFID readers (multi-port)
-    Each reader has an independent buffer and last seen RFID.
+    Monitor function that runs in a subprocess.
+    Modified version that supports multiple RFID readers (each on its own port).
+    Each reader has its own input buffer and tracking for last detected RFID.
     """
     readers = []
     try:
@@ -29,8 +30,9 @@ def _rfid_monitor(queue, reset_event, stop_event, ports, min_rep=3):
             reader.flushInput()
             readers.append((port, reader))
 
-        buffers = {port: b'' for port, _ in readers}  # Buffer per port
-        last_rfids = {port: None for port, _ in readers}  # Track last RFID per port
+        # One buffer and last RFID per reader
+        buffers = {port: b'' for port, _ in readers}
+        last_rfids = {port: None for port, _ in readers}
 
         while not stop_event.is_set():
             if reset_event.is_set():
@@ -41,18 +43,21 @@ def _rfid_monitor(queue, reset_event, stop_event, ports, min_rep=3):
                     last_rfids[port] = None
 
             for port, reader in readers:
+                # Read incoming bytes and append to the buffer for that port
                 buffers[port] += reader.read(RFID_LENGTH)
+
+                # Extract potential RFID strings
                 rfids = [r for r in buffers[port].split(RFID_SEP) if len(r) == RFID_LENGTH]
 
                 if len(set(rfids)) > 1:
-                    # Inconsistent RFID readings, keep only last consistent entries
+                    # If inconsistent reads are detected, keep only the repeated valid entries
                     buffers[port] = RFID_SEP.join([rfids[-1]] * rfids.count(rfids[-1]))
                     continue
 
                 if len(rfids) >= min_rep:
                     rfid = rfids[0].decode()
                     if rfid != last_rfids[port]:
-                        queue.put((port, rfid))  # Include port info for traceability
+                        queue.put((port, rfid))  # Include port to help identify source
                         last_rfids[port] = rfid
 
         for _, reader in readers:
@@ -66,14 +71,16 @@ def _rfid_monitor(queue, reset_event, stop_event, ports, min_rep=3):
 class OmmDetectParticipant(Item):
 
     def reset(self):
+        # Default values for all user-facing variables
         self.var.detector = 'form'
-        self.var.serial_ports = 'COM3,COM4'  # Modified: list of serial ports
+        self.var.serial_ports = 'COM3,COM4'  # Default: two example ports for RFID readers
         self.var.participant_variable = 'participant'
         self.var.min_rep = 1
-        self.var.enable_duration = 'no'  # Optional reading timeout control
-        self.var.read_duration = 5  # Duration in seconds
+        self.var.enable_duration = 'no'  # Optional timeout feature for RFID read
+        self.var.read_duration = 5  # Timeout in seconds
 
     def _prepare_form(self):
+        # Original form entry preparation
         self._form = widgets.form(
             self.experiment,
             cols=(1,),
@@ -92,6 +99,7 @@ class OmmDetectParticipant(Item):
         self.experiment.var.set(self.var.participant_variable, '/{}/'.format(self.var.get(self.var.participant_variable)))
 
     def _prepare_keypress(self):
+        # Original keypress preparation
         self._keyboard = Keyboard(self.experiment)
         self.run = self._run_keypress
 
@@ -101,6 +109,7 @@ class OmmDetectParticipant(Item):
         self.experiment.var.set(self.var.participant_variable, '/{}/'.format(key))
 
     def _prepare_rfid(self):
+        # Initialization of RFID reader process if not already running
         if not hasattr(self.experiment, '_omm_participant_process'):
             oslogger.info('Starting RFID monitor process')
 
@@ -108,7 +117,9 @@ class OmmDetectParticipant(Item):
             self.experiment._omm_participant_reset_event = multiprocessing.Event()
             self.experiment._omm_participant_stop_event = multiprocessing.Event()
 
-            ports = [p.strip() for p in self.var.serial_ports.split(',')]  # Modified: support multi-port
+            # Parse multiple ports from comma-separated list
+            ports = [p.strip() for p in self.var.serial_ports.split(',')]
+
             self.experiment._omm_participant_process = multiprocessing.Process(
                 target=_rfid_monitor,
                 args=(
@@ -126,15 +137,17 @@ class OmmDetectParticipant(Item):
         self._keyboard = Keyboard(self.experiment, timeout=0)
 
     def _run_rfid(self):
+        # Signal reset to discard old data
         self.experiment._omm_participant_reset_event.set()
 
+        # Clear any residual queue items
         while not self.experiment._omm_participant_queue.empty():
             try:
                 self.experiment._omm_participant_queue.get_nowait()
             except queue.Empty:
                 break
 
-        # Modified: Add support for optional timeout during RFID reading
+        # Optional timeout logic (new feature)
         duration_enabled = self.var.get('enable_duration', 'no') == 'yes'
         read_duration = float(self.var.get('read_duration', 0))
         start_time = time.time()
@@ -154,10 +167,11 @@ class OmmDetectParticipant(Item):
                 oslogger.info('Read duration expired, no RFID detected.')
                 return
 
+        # Retrieve RFID from queue (port + RFID tuple)
         rfid_data = self.experiment._omm_participant_queue.get()
 
         if isinstance(rfid_data, tuple) and len(rfid_data) == 2:
-            port, rfid = rfid_data  # Modified: extract RFID and port info
+            port, rfid = rfid_data
             oslogger.info(f'RFID detected from {port}: {rfid}')
         else:
             rfid = rfid_data
@@ -166,10 +180,12 @@ class OmmDetectParticipant(Item):
         self.experiment.var.set(self.var.participant_variable, '/{}/'.format(rfid))
 
     def _close_rfid(self):
+        # Clean shutdown of the RFID monitoring process
         oslogger.info('Stopping RFID monitor process')
         self.experiment._omm_participant_stop_event.set()
 
     def prepare(self):
+        # Dispatch to the appropriate detection mode
         if self.var.detector == 'rfid':
             self._prepare_rfid()
         elif self.var.detector == 'keypress':
