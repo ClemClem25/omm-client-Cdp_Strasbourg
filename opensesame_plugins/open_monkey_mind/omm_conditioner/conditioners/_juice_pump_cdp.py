@@ -17,14 +17,14 @@ class JuicePumpCdp(BaseConditioner):
         if not isinstance(self.stop, str):
             raise TypeError(f"'stop' doit être une chaîne, mais a reçu {type(self.stop).__name__}")
         
-        self.secondes = kwargs.get('secondes', '5')  # Par défaut, c'est une chaîne de caractères
+        self.secondes = kwargs.get('secondes', '5')  # By default, it's a string
         try:
-            self.secondes = float(self.secondes)  # Conversion en nombre
+            self.secondes = float(self.secondes)  # Convert to a number
         except ValueError:
             raise ValueError(f"'secondes' doit être un nombre valide, mais a reçu {self.secondes}")
 
         
-        print(f"kwargs reçus : {kwargs}")  # Debug : imprimer les arguments reçus
+        print(f"kwargs reçus : {kwargs}")  # Debug: print received arguments
         
         self._serial = serial.Serial(self._port)
 
