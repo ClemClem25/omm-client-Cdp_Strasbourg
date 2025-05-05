@@ -65,7 +65,6 @@ class OmmConditioner(Item):
             actions.append('reward')
 
         if self.var.juice == 'yes':
-            print("nickel")
             self._conditioner.start=self.var.start
             self._conditioner.stop=self.var.stop
             self._conditioner.duration=self.var.secondes
